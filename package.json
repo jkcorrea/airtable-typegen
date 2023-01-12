@@ -1,0 +1,75 @@
+{
+  "name": "airtable-typegen",
+  "version": "0.1.0",
+  "description": "Generate TypeScript types from your Airtable bases",
+  "author": "Jake Correa @jkcorrea",
+  "bin": {
+    "airtable-typegen": "./bin/run"
+  },
+  "homepage": "https://github.com/jkcorrea/airtable-typegen",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "repository": "jkcorrea/airtable-typegen",
+  "files": [
+    "/bin",
+    "/dist",
+    "/npm-shrinkwrap.json",
+    "/oclif.manifest.json"
+  ],
+  "dependencies": {
+    "@oclif/core": "^1.23.0",
+    "@types/fs-extra": "^11.0.1",
+    "change-case": "^4.1.2",
+    "dotenv": "^16.0.3",
+    "fs-extra": "^11.1.0",
+    "ts-morph": "^17.0.1",
+    "zod": "^3.20.2"
+  },
+  "devDependencies": {
+    "@oclif/test": "^2.2.19",
+    "@types/chai": "^4",
+    "@types/mocha": "^9.0.0",
+    "@types/node": "^16.18.11",
+    "@typescript-eslint/eslint-plugin": "^5.46.0",
+    "@typescript-eslint/parser": "^5.46.0",
+    "chai": "^4",
+    "eslint": "^8.29.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-react": "^7.31.11",
+    "eslint-plugin-simple-import-sort": "^8.0.0",
+    "eslint-plugin-tailwindcss": "^3.7.1",
+    "eslint-plugin-unused-imports": "^2.0.0",
+    "mocha": "^9",
+    "nock": "^13.3.0",
+    "oclif": "^3",
+    "prettier": "^2.8.1",
+    "shx": "^0.3.3",
+    "sinon": "^15.0.1",
+    "ts-node": "^10.9.1",
+    "tslib": "^2.4.1",
+    "typescript": "^4.9.4"
+  },
+  "oclif": {
+    "default": ".",
+    "commands": "./dist/commands"
+  },
+  "scripts": {
+    "build": "shx rm -rf dist && tsc -b",
+    "lint": "eslint . --ext .ts --config .eslintrc",
+    "postpack": "shx rm -f oclif.manifest.json",
+    "posttest": "yarn lint",
+    "prepack": "yarn build && oclif manifest && oclif readme",
+    "test": "mocha --forbid-only \"test/**/*.test.ts\"",
+    "version": "oclif readme && git add README.md"
+  },
+  "engines": {
+    "node": ">=12.0.0"
+  },
+  "bugs": "https://github.com/jkcorrea/airtable-typegen/issues",
+  "keywords": [
+    "oclif"
+  ],
+  "types": "dist/index.d.ts"
+}
