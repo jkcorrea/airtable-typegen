@@ -1,0 +1,14 @@
+{
+  "bases": [
+    {
+      "id": "appXYZ123456789",
+      "name": "Apartments",
+      "permissionLevel": "create"
+    },
+    {
+      "id": "appABC123456789",
+      "name": "Blah",
+      "permissionLevel": "create"
+    }
+  ]
+}
