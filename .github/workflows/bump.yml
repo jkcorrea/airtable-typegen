@@ -21,7 +21,7 @@ jobs:
         with:
           node-version: '18'
           cache: 'pnpm'
-      - run: pnpm install
+      - run: pnpm install --frozen-lockfile
       - name: Setup Git
         run: |
           git config user.name 'Jake Correa'
