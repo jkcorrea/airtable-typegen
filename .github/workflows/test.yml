@@ -1,4 +1,5 @@
-name: tests
+name: Test
+
 on:
   push:
     branches-ignore: [main]
@@ -6,4 +7,18 @@ on:
 
 jobs:
   unit-tests:
-    uses: oclif/github-workflows/.github/workflows/unitTest.yml@main
+    strategy:
+      matrix:
+        os: ["ubuntu-latest", "windows-latest"]
+        node_version: [lts/-1, lts/*, latest]
+      fail-fast: false
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node_version }}
+          cache: pnpm
+      - run: pnpm install --network-timeout 600000
+      - run: pnpm build
+      - run: pnpm test

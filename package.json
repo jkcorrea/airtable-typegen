@@ -62,6 +62,7 @@
     "posttest": "yarn lint",
     "prepack": "yarn build && oclif manifest && oclif readme",
     "test": "mocha --forbid-only \"test/**/*.test.ts\"",
+    "typecheck": "tsc --noEmit",
     "version": "oclif readme && git add README.md"
   },
   "engines": {
