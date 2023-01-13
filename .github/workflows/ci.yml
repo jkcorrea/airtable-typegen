@@ -5,6 +5,30 @@ on:
   workflow_dispatch:
 
 jobs:
+  only-doc-changes:
+    name: 📒 Only doc changes?
+    runs-on: ubuntu-latest
+    outputs:
+      only-doc-changes: ${{ steps.only-doc-changes.outputs.only_modified }}
+    steps:
+      - name: 🛑 Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.9.1
+      - name: ⬇️ Checkout repo
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 2 # Fetch the preceding commit as well, to detect changes
+      - name: 🕵️‍♀️ Detect if doc-only changes
+        id: only-doc-changes
+        uses: tj-actions/changed-files@v19
+        with:
+          files: |
+            README.md
+            LICENSE.md
+            .vscode/
+            docs/
+            .env.example
+            .editorconfig
+
   ci:
     strategy:
       matrix:
