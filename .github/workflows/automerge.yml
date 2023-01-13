@@ -1,14 +1,28 @@
-name: Automerge
+
+name: "Dependabot automerge"
+
 on:
-  workflow_dispatch:
-  schedule:
-    - cron: '17 2,5,8,11 * * *'
+  pull_request:
 
 jobs:
-  automerge:
+  worker:
     runs-on: ubuntu-latest
+
+    if: github.actor == 'dependabot[bot]'
     steps:
-      - uses: actions/checkout@v3
-      - uses: ahmadnassri/action-dependabot-auto-merge@v2
+      - name: 'Wait for status checks'
+        id: waitforstatuschecks
+        uses: WyriHaximus/github-action-wait-for-status@v1.7.1
         with:
-          github-token: ${{ secrets.AUTOMERGE_ACCESS_TOKEN }}
+          ignoreActions: worker,WIP
+          checkInterval: 300
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 'Automerge'
+        uses: pascalgn/automerge-action@v0.15.5
+        if: steps.waitforstatuschecks.outputs.status == 'success'
+        env:
+          MERGE_LABELS: "update"
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MERGE_DELETE_BRANCH: true
