@@ -3,10 +3,11 @@
  */
 module.exports = {
   parser: '@typescript-eslint/parser',
-  plugins: ['@typescript-eslint', 'simple-import-sort', 'import', 'unused-imports', 'tailwindcss'],
+  plugins: ['@typescript-eslint', 'simple-import-sort', 'import', 'unused-imports', 'tailwindcss', 'jest'],
   extends: ['eslint:recommended', 'plugin:tailwindcss/recommended', 'plugin:prettier/recommended'],
   env: {
     node: true,
+    'jest/globals': true,
   },
   rules: {
     // Place to specify ESLint rules. Can be used to overwrite rules specified from the extended configs

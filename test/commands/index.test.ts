@@ -1,12 +1,16 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 import { test } from '@oclif/test'
-import { expect } from 'chai'
+import fse from 'fs-extra'
 import fs from 'node:fs'
-import sinon, { SinonStub } from 'sinon'
 
 import { AIRTABLE_API_BASE, AIRTABLE_API_BASE_META_PATH, AIRTABLE_API_VERSION } from '../../src/utils/constants'
 
 import basesMeta from '../fixtures/bases-meta.json'
 import tablesMeta from '../fixtures/tables-meta.json'
+
+jest.mock('fs-extra')
+
+const mockedWriteFile = jest.mocked(fse.writeFile, { shallow: true })
 
 const tableMetaPrefix = `${AIRTABLE_API_VERSION}${AIRTABLE_API_BASE_META_PATH}`
 
@@ -17,17 +21,21 @@ describe('e2e', () => {
   const baseId = basesMeta.bases[0].id
   process.env.AIRTABLE_TYPEGEN_ACCESS_TOKEN = 'my-secret-token'
 
+  beforeEach(() => {
+    jest.clearAllMocks()
+  })
+
   test
     .nock(AIRTABLE_API_BASE, { allowUnmocked: false }, (api) => {
       api.get(tableMetaPrefix).reply(200, basesMeta)
       api.get(`${tableMetaPrefix}/${baseId}/tables`).reply(200, tablesMeta)
     })
-    .stub(fs, 'writeFile', sinon.stub())
     .stdout()
     .command(['.', baseId])
     .it('successfuly generates typescript interfaces', () => {
-      const stubWrite = fs.writeFile as unknown as SinonStub
-      expect(stubWrite.calledOnceWith('apartments.ts', tsGeneratedFile))
+      expect(mockedWriteFile.mock.calls).toHaveLength(1)
+      expect(mockedWriteFile.mock.lastCall?.[0]).toContain('apartments.ts')
+      expect(mockedWriteFile.mock.lastCall?.[1]).toBe(tsGeneratedFile)
     })
 
   test
@@ -35,11 +43,11 @@ describe('e2e', () => {
       api.get(`${tableMetaPrefix}/${baseId}/tables`).reply(200, tablesMeta)
       api.get(tableMetaPrefix).reply(200, basesMeta)
     })
-    .stub(fs, 'writeFile', sinon.stub())
     .stdout()
     .command(['.', baseId, '-z'])
     .it('successfuly generates zod schemas', () => {
-      const stubWrite = fs.writeFile as unknown as SinonStub
-      expect(stubWrite.calledOnceWith('apartments.ts', zodGeneratedFile))
+      expect(mockedWriteFile.mock.calls).toHaveLength(1)
+      expect(mockedWriteFile.mock.lastCall?.[0]).toContain('apartments.ts')
+      expect(mockedWriteFile.mock.lastCall?.[1]).toBe(zodGeneratedFile)
     })
 })

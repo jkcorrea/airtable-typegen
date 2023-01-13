@@ -1,5 +1,7 @@
 {
   "compilerOptions": {
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "declaration": true,
     "importHelpers": true,
@@ -9,7 +11,5 @@
     "strict": true,
     "target": "es2019"
   },
-  "include": [
-    "src/**/*"
-  ]
+  "include": ["src/**/*"]
 }

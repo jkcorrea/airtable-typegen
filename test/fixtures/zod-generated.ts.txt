@@ -63,7 +63,7 @@ export const ApartmentsSchema = z.object({
   visited: ApartmentsVisited,
   visitNotes: z.string(),
   comments: z.string(),
-  duration: z.number(),
+  test1: z.number().int().positive(),
   test2: z.array(z.string()),
   imagesFromTest2: z.union([z.array(z.string()), z.array(z.boolean()), z.array(z.number()), z.array(z.record(z.unknown()))]),
 })

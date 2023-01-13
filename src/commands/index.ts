@@ -77,7 +77,7 @@ Reads environment from .env file if present in current working directory.`
 
     return httpRequest({
       hostname: AIRTABLE_API_BASE.replace(/https?:\/\//, ''),
-      path: new URL(reqPath, AIRTABLE_API_VERSION).href,
+      path: AIRTABLE_API_VERSION + reqPath,
       headers: {
         Authorization: `Bearer ${this.accessToken}`,
       },

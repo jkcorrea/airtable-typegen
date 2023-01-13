@@ -32,7 +32,7 @@ export interface Apartments {
   visited: 'Want to' | 'Scheduled' | 'Visited' | 'Table for now'
   visitNotes: string
   comments: string
-  duration: number
+  test1: number
   test2: Array<string>
   imagesFromTest2: Array<string | boolean | number | Record<string, unknown>>
 }
