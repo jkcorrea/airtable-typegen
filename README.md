@@ -8,6 +8,9 @@ Generate TypeScript types & [Zod](https://github.com/colinhacks/zod) schemas fro
 [![Downloads/week](https://img.shields.io/npm/dw/airtable-typegen.svg)](https://npmjs.org/package/airtable-typegen)
 [![License](https://img.shields.io/npm/l/airtable-typegen.svg)](https://github.com/jkcorrea/airtable-typegen/blob/main/package.json)
 
+> :warning: **This has not be thoroughly tested with Airtable bases in the wild.** Please use carefully!
+
+
 ## Install
 
 ```sh
