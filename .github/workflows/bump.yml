@@ -21,8 +21,7 @@ jobs:
         with:
           node-version: '18'
           cache: 'pnpm'
-      - name: Install dependencies
-        uses: bahmutov/npm-install@v1
+      - run: pnpm install
       - name: Setup Git
         run: |
           git config user.name 'Jake Correa'

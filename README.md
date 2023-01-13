@@ -4,7 +4,7 @@ airtable-typegen
 Generate TypeScript types & [Zod](https://github.com/colinhacks/zod) schemas from your Airtable bases.
 
 [![Version](https://img.shields.io/npm/v/airtable-typegen.svg)](https://npmjs.org/package/airtable-typegen)
-[![CircleCI](https://circleci.com/gh/jkcorrea/airtable-typegen/tree/main.svg?style=shield)](https://circleci.com/gh/jkcorrea/airtable-typegen/tree/main)
+[![CI](https://img.shields.io/github/actions/workflow/status/jkcorrea/airtable-typegen/ci)](https://circleci.com/gh/jkcorrea/airtable-typegen/tree/main)
 [![Downloads/week](https://img.shields.io/npm/dw/airtable-typegen.svg)](https://npmjs.org/package/airtable-typegen)
 [![License](https://img.shields.io/npm/l/airtable-typegen.svg)](https://github.com/jkcorrea/airtable-typegen/blob/main/package.json)
 

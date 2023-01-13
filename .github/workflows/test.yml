@@ -19,6 +19,6 @@ jobs:
         with:
           node-version: ${{ matrix.node_version }}
           cache: pnpm
-      - run: pnpm install --network-timeout 600000
+      - run: pnpm install
       - run: pnpm build
       - run: pnpm test
