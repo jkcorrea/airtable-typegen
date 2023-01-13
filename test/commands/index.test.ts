@@ -14,8 +14,11 @@ const mockedWriteFile = jest.mocked(fse.writeFile, { shallow: true })
 
 const tableMetaPrefix = `${AIRTABLE_API_VERSION}${AIRTABLE_API_BASE_META_PATH}`
 
-const tsGeneratedFile = fs.readFileSync('test/fixtures/ts-generated.ts.txt', 'utf-8')
-const zodGeneratedFile = fs.readFileSync('test/fixtures/zod-generated.ts.txt', 'utf-8')
+/** Normalize line endings so we can compare on Windows & Unix */
+const nrmlz = (str: string, normalized = '\r\n') => str.replace(/\r?\n/g, normalized)
+
+const tsGeneratedFile = nrmlz(fs.readFileSync('test/fixtures/ts-generated.ts.txt', 'utf-8'))
+const zodGeneratedFile = nrmlz(fs.readFileSync('test/fixtures/zod-generated.ts.txt', 'utf-8'))
 
 describe('e2e', () => {
   const baseId = basesMeta.bases[0].id
@@ -35,7 +38,7 @@ describe('e2e', () => {
     .it('successfuly generates typescript interfaces', () => {
       expect(mockedWriteFile.mock.calls).toHaveLength(1)
       expect(mockedWriteFile.mock.lastCall?.[0]).toContain('apartments.ts')
-      expect(mockedWriteFile.mock.lastCall?.[1].toString().trim()).toBe(tsGeneratedFile.trim())
+      expect(nrmlz(mockedWriteFile.mock.lastCall?.[1].toString() ?? '')).toBe(tsGeneratedFile)
     })
 
   test
@@ -48,6 +51,6 @@ describe('e2e', () => {
     .it('successfuly generates zod schemas', () => {
       expect(mockedWriteFile.mock.calls).toHaveLength(1)
       expect(mockedWriteFile.mock.lastCall?.[0]).toContain('apartments.ts')
-      expect(mockedWriteFile.mock.lastCall?.[1].toString().trim()).toBe(zodGeneratedFile.trim())
+      expect(nrmlz(mockedWriteFile.mock.lastCall?.[1].toString() ?? '')).toBe(zodGeneratedFile)
     })
 })
