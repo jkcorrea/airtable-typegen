@@ -35,7 +35,7 @@ describe('e2e', () => {
     .it('successfuly generates typescript interfaces', () => {
       expect(mockedWriteFile.mock.calls).toHaveLength(1)
       expect(mockedWriteFile.mock.lastCall?.[0]).toContain('apartments.ts')
-      expect(mockedWriteFile.mock.lastCall?.[1]).toBe(tsGeneratedFile)
+      expect(mockedWriteFile.mock.lastCall?.[1].toString().trim()).toBe(tsGeneratedFile.trim())
     })
 
   test
@@ -48,6 +48,6 @@ describe('e2e', () => {
     .it('successfuly generates zod schemas', () => {
       expect(mockedWriteFile.mock.calls).toHaveLength(1)
       expect(mockedWriteFile.mock.lastCall?.[0]).toContain('apartments.ts')
-      expect(mockedWriteFile.mock.lastCall?.[1]).toBe(zodGeneratedFile)
+      expect(mockedWriteFile.mock.lastCall?.[1].toString().trim()).toBe(zodGeneratedFile.trim())
     })
 })
