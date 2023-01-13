@@ -20,9 +20,9 @@ jobs:
         with:
           node-version: latest
           registry-url: https://registry.npmjs.org/
-          cache: pnpm
 
 
+      # Setup PNPM
       - uses: pnpm/action-setup@v2
         name: Install pnpm
         id: pnpm-install
@@ -34,7 +34,6 @@ jobs:
         shell: bash
         run: |
           echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
-
       - uses: actions/cache@v3
         name: Setup pnpm cache
         with:

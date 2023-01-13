@@ -12,6 +12,7 @@ jobs:
     name: Bump version
     runs-on: ubuntu-latest
     steps:
+      # Setup repo
       - name: Check out source
         uses: actions/checkout@v3
         with:
@@ -20,8 +21,8 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '18'
-          cache: 'pnpm'
 
+      # Setup PNPM
       - name: Install pnpm
         uses: pnpm/action-setup@v2
         id: pnpm-install
@@ -33,7 +34,6 @@ jobs:
         shell: bash
         run: |
           echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
-
       - name: Setup pnpm cache
         uses: actions/cache@v3
         with:
@@ -44,6 +44,7 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      # Configure git
       - name: Setup Git
         run: |
           git config user.name 'Jake Correa'
@@ -51,5 +52,6 @@ jobs:
       - name: bump version
         run: npm version ${{ github.event.inputs.version }}
 
+      # Push new version
       - name: Push latest version
         run: git push origin main --follow-tags

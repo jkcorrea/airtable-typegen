@@ -4,7 +4,6 @@ on:
   push:
   workflow_dispatch:
 
-
 jobs:
   ci:
     strategy:
@@ -20,8 +19,8 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18
-          cache: pnpm
 
+      # Setup PNPM
       - uses: pnpm/action-setup@v2
         name: Install pnpm
         id: pnpm-install
@@ -33,7 +32,6 @@ jobs:
         shell: bash
         run: |
           echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
-
       - uses: actions/cache@v3
         name: Setup pnpm cache
         with:
