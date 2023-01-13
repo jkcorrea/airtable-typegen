@@ -1,7 +1,7 @@
 {
   "name": "airtable-typegen",
   "version": "0.2.2",
-  "description": "Generate TypeScript types from your Airtable bases",
+  "description": "Generate TypeScript & Zod types from your Airtable bases",
   "author": "Jake Correa @jkcorrea",
   "bin": {
     "airtable-typegen": "./bin/run"
