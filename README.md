@@ -8,15 +8,27 @@ Generate TypeScript types & [Zod](https://github.com/colinhacks/zod) schemas fro
 [![Downloads/week](https://img.shields.io/npm/dw/airtable-typegen.svg)](https://npmjs.org/package/airtable-typegen)
 [![License](https://img.shields.io/npm/l/airtable-typegen.svg)](https://github.com/jkcorrea/airtable-typegen/blob/main/package.json)
 
-> :warning: **This has not be thoroughly tested with Airtable bases in the wild.** Please use carefully!
+> :warning: **This has not be thoroughly tested with Airtable bases in the wild.** Please use carefully and sanity check the generated code before using in production! Contributions & bug reports are appreciated :)
 
 
-## Install
+## Quickstart
 
 ```sh
-npm install --save-dev airtable-typegen
+$ npm install --save-dev airtable-typegen
 # or
-yarn add -D airtable-typegen
+$ yarn add -D airtable-typegen
+```
+
+Then generate types via:
+
+```sh
+$ airtable-typegen <BASE_ID> -o ./types/airtable.d.ts
+```
+
+Or generate [Zod](https://github.com/colinhacks/zod) schemas with the `-z` flag!
+
+```sh
+$ airtable-typegen <BASE_ID> -z -o ./src/schemas/airtable.ts
 ```
 
 ## Setup
@@ -61,4 +73,33 @@ EXAMPLES
 
   $ airtable-typegen appABC123 -z -o ./src/schemas/airtable.ts
   > Outputs Zod schemas to ./src/schemas/airtable.ts
+```
+
+
+For example, you could do this in your `package.json`:
+
+```json
+{
+  "scripts": {
+    "generate:airtable": "airtable-typegen <BASE_ID> -z -o src/schemas/airtable.ts",
+  }
+}
+```
+
+then run it everytime you want to sync the types:
+
+```sh
+$ npm run generate:airtable
+```
+
+Alternatively, you could combine it into your `dev` and `build` commands (withs omething like [npm-run-all](https://github.com/mysticatea/npm-run-all), perhaps):
+
+```json
+{
+  "scripts": {
+    "build": "run-s generate:airtable 'remix build'",
+    "dev": "run-s generate:airtable 'remix dev'",
+    "generate:airtable": "airtable-typegen <BASE_ID> -z -o src/schemas/airtable.ts",
+  }
+}
 ```
