@@ -1,0 +1,966 @@
+{
+  "tables": [
+    {
+      "id": "tblLyAjO2r2Ou4TYe",
+      "name": "Furniture",
+      "primaryFieldId": "fldQtzkTUn5Qh1OTf",
+      "fields": [
+        {
+          "type": "singleLineText",
+          "id": "fldQtzkTUn5Qh1OTf",
+          "name": "Name"
+        },
+        {
+          "type": "singleSelect",
+          "options": {
+            "choices": [
+              {
+                "id": "selT5nzaGcmmQHRlk",
+                "name": "Beds",
+                "color": "tealLight1"
+              },
+              {
+                "id": "selllwzqL4EYeeB5g",
+                "name": "Bookshelves",
+                "color": "pinkLight1"
+              },
+              {
+                "id": "selcusyCS2ENjhu3b",
+                "name": "Chairs",
+                "color": "yellowLight1"
+              },
+              {
+                "id": "selhojpqR6E0fcC3e",
+                "name": "Lighting",
+                "color": "blueLight1"
+              },
+              {
+                "id": "seljtmBBU6zRo4y7b",
+                "name": "Rugs",
+                "color": "orangeLight1"
+              },
+              {
+                "id": "selgAxRpUjVr08tSH",
+                "name": "Sofas",
+                "color": "purpleLight1"
+              },
+              {
+                "id": "selhpnAwN7BRrhvae",
+                "name": "Tables",
+                "color": "redLight1"
+              }
+            ]
+          },
+          "id": "fldVqoaVPp5Sl9RQe",
+          "name": "Type"
+        },
+        {
+          "type": "multipleAttachments",
+          "options": {
+            "isReversed": false
+          },
+          "id": "fldXjwhMTo9Qi0SVl",
+          "name": "Images"
+        },
+        {
+          "type": "multipleRecordLinks",
+          "options": {
+            "linkedTableId": "tblPXG8i9fpGJnFOo",
+            "isReversed": false,
+            "prefersSingleRecordLink": false,
+            "inverseLinkFieldId": "fldzHOYxXm20grW7E"
+          },
+          "id": "fldq8fxSg67tUWqYi",
+          "name": "Vendor"
+        },
+        {
+          "type": "checkbox",
+          "options": {
+            "icon": "thumbsUp",
+            "color": "yellowBright"
+          },
+          "id": "fldHDbns1SGEd9q27",
+          "name": "In stock"
+        },
+        {
+          "type": "currency",
+          "options": {
+            "precision": 2,
+            "symbol": "$"
+          },
+          "id": "fldgdHAbi5nAK92fF",
+          "name": "Unit cost"
+        },
+        {
+          "type": "singleLineText",
+          "id": "fldbKWIizckNsFbuh",
+          "name": "Size (WxLxH)"
+        },
+        {
+          "type": "multipleSelects",
+          "options": {
+            "choices": [
+              {
+                "id": "seliwQcHMSFLbqkHC",
+                "name": "Brass",
+                "color": "yellowDark1"
+              },
+              {
+                "id": "selVyYN68PgQv7lg2",
+                "name": "Brushed nickel",
+                "color": "grayLight2"
+              },
+              {
+                "id": "selpFXAAGtN7gWq5P",
+                "name": "Corduroy",
+                "color": "orangeLight1"
+              },
+              {
+                "id": "selIoQH8EE5E5KHGD",
+                "name": "Cotton",
+                "color": "pinkLight2"
+              },
+              {
+                "id": "selAWNdI2pc4pdY9B",
+                "name": "Dark wood",
+                "color": "grayBright"
+              },
+              {
+                "id": "selVxnUcwShCZrc73",
+                "name": "Foam beans",
+                "color": "orangeLight2"
+              },
+              {
+                "id": "selKXszRL4VtNQyjG",
+                "name": "Glass",
+                "color": "greenLight2"
+              },
+              {
+                "id": "selm2rYYYXpZnoXCx",
+                "name": "Glazed ceramic",
+                "color": "tealLight2"
+              },
+              {
+                "id": "selylpJAy6xozJ3CV",
+                "name": "Indian wool",
+                "color": "purpleLight1"
+              },
+              {
+                "id": "selFBD3WOlsFIBR1x",
+                "name": "Iron",
+                "color": "grayBright"
+              },
+              {
+                "id": "selCgpyetrwYrLEgK",
+                "name": "Lacquered ash",
+                "color": "redLight1"
+              },
+              {
+                "id": "sel4MLetdioygHPlC",
+                "name": "Leather",
+                "color": "orangeLight1"
+              },
+              {
+                "id": "sel9PDa1XZyzRu2jG",
+                "name": "Leather cowhide",
+                "color": "orangeLight1"
+              },
+              {
+                "id": "selXsoHrXyfpE0nvd",
+                "name": "Light wood",
+                "color": "orangeLight2"
+              },
+              {
+                "id": "selLjB4mRq2937b7L",
+                "name": "Linen shade",
+                "color": "yellowLight2"
+              },
+              {
+                "id": "selYymIpWxjSGw6Wu",
+                "name": "Marble",
+                "color": "grayLight2"
+              },
+              {
+                "id": "sel5beo0b4wlZfs2p",
+                "name": "Metal",
+                "color": "grayLight1"
+              },
+              {
+                "id": "selM1FpnpWgg9Px7s",
+                "name": "Mirror",
+                "color": "cyanLight2"
+              },
+              {
+                "id": "selY1C8AUbTUTYlYG",
+                "name": "Poly-cotton shade",
+                "color": "greenDark1"
+              },
+              {
+                "id": "selaCnGiM5OwczjwT",
+                "name": "Reclaimed wood",
+                "color": "orangeDark1"
+              },
+              {
+                "id": "selsBjiF2tqO2wOEf",
+                "name": "Shiny black",
+                "color": "grayBright"
+              },
+              {
+                "id": "selivxNeD6stWxPda",
+                "name": "Solid maple",
+                "color": "yellowDark1"
+              },
+              {
+                "id": "selMx6lvb4hiKvglt",
+                "name": "Solid teak",
+                "color": "yellowDark1"
+              },
+              {
+                "id": "selsI3mmZtFZNw286",
+                "name": "Stainless steel",
+                "color": "grayLight1"
+              },
+              {
+                "id": "selrzEQO9Dom2n4yp",
+                "name": "Steel",
+                "color": "grayLight1"
+              },
+              {
+                "id": "sel8oxfccoV22pYoM",
+                "name": "Suede",
+                "color": "orangeLight2"
+              },
+              {
+                "id": "selYRZN3iqq0BwYhq",
+                "name": "Tech suede",
+                "color": "orangeLight2"
+              },
+              {
+                "id": "sel0ez3ET3DFDbEvl",
+                "name": "Viscose",
+                "color": "purpleLight1"
+              },
+              {
+                "id": "sel2yZDe18VfAArTs",
+                "name": "Walnut",
+                "color": "yellowLight1"
+              },
+              {
+                "id": "selb4mEVgBMgXj7Ms",
+                "name": "Wool",
+                "color": "yellowLight1"
+              }
+            ]
+          },
+          "id": "fldaUAD8WaGC3zeEX",
+          "name": "Materials"
+        },
+        {
+          "type": "multipleSelects",
+          "options": {
+            "choices": [
+              {
+                "id": "selBKvomqEGobvpOZ",
+                "name": "Beige",
+                "color": "orangeLight2"
+              },
+              {
+                "id": "selJQMX8N96eUif2B",
+                "name": "Black",
+                "color": "grayDark1"
+              },
+              {
+                "id": "sel9Uvbx0zKSfXbRQ",
+                "name": "Blue",
+                "color": "blueBright"
+              },
+              {
+                "id": "seleQvKPDXBzUaCkB",
+                "name": "Blue purple",
+                "color": "blueLight1"
+              },
+              {
+                "id": "selWPBdSMPcpkoBZc",
+                "name": "Brown",
+                "color": "yellowDark1"
+              },
+              {
+                "id": "selAbPIHs6j9HHxFX",
+                "name": "Cherry",
+                "color": "redDark1"
+              },
+              {
+                "id": "selQRwasQfBJGOOh0",
+                "name": "Cream",
+                "color": "yellowLight2"
+              },
+              {
+                "id": "selMGam8QyEgp0drG",
+                "name": "Fern",
+                "color": "greenLight1"
+              },
+              {
+                "id": "seldNmQfgqc9wGYm9",
+                "name": "Framboise",
+                "color": "redLight2"
+              },
+              {
+                "id": "selP4RdhY4zdMmT99",
+                "name": "Gold",
+                "color": "yellowDark1"
+              },
+              {
+                "id": "sel0raJMsm7rxWr2s",
+                "name": "Green",
+                "color": "greenBright"
+              },
+              {
+                "id": "selw93MjRTfvgjVnx",
+                "name": "Grey",
+                "color": "grayLight1"
+              },
+              {
+                "id": "sel7QvSJptmOf1k2I",
+                "name": "Matte black",
+                "color": "grayDark1"
+              },
+              {
+                "id": "sellUxsjLX1jihrqz",
+                "name": "Orange",
+                "color": "orangeBright"
+              },
+              {
+                "id": "sel7cHZDdAFTdOm3Z",
+                "name": "Red",
+                "color": "redBright"
+              },
+              {
+                "id": "selsBjiF2tqO2wOEf",
+                "name": "Shiny black",
+                "color": "grayBright"
+              },
+              {
+                "id": "sel9b24xG0zsJd0kn",
+                "name": "Silver",
+                "color": "grayLight1"
+              },
+              {
+                "id": "sel9ZxNqWYiaPHd4R",
+                "name": "Taupe",
+                "color": "yellowLight2"
+              },
+              {
+                "id": "sel8xUTqG0dxYhmT9",
+                "name": "Velvet",
+                "color": "purpleBright"
+              },
+              {
+                "id": "selsu5Vu6do3fiDVM",
+                "name": "White",
+                "color": "grayLight2"
+              },
+              {
+                "id": "selG7L2K0FrOqSF57",
+                "name": "Yellow",
+                "color": "yellowBright"
+              }
+            ]
+          },
+          "id": "fldvNnCzDw9wLsEim",
+          "name": "Color"
+        },
+        {
+          "type": "multipleSelects",
+          "options": {
+            "choices": [
+              {
+                "id": "selEpdSI1wI937bYy",
+                "name": "Living room",
+                "color": "cyanLight2"
+              },
+              {
+                "id": "selv5Gn57RdquxhfB",
+                "name": "Office",
+                "color": "yellowLight2"
+              },
+              {
+                "id": "selaSZz1IJEH3qbxw",
+                "name": "Outdoor",
+                "color": "greenLight2"
+              },
+              {
+                "id": "selzy25geRhPdMWEn",
+                "name": "Dining",
+                "color": "redLight2"
+              },
+              {
+                "id": "selGvIVMJ8OX7uSLl",
+                "name": "Bedroom",
+                "color": "purpleLight2"
+              }
+            ]
+          },
+          "id": "fldmk6UtXZTJS1gz5",
+          "name": "Settings"
+        },
+        {
+          "type": "multipleAttachments",
+          "options": {
+            "isReversed": false
+          },
+          "id": "fldXF8oi5GwFskgPu",
+          "name": "Schematic"
+        },
+        {
+          "type": "multipleRecordLinks",
+          "options": {
+            "linkedTableId": "tbliA6axBVBsWc433",
+            "isReversed": false,
+            "prefersSingleRecordLink": false,
+            "inverseLinkFieldId": "fldsHaW5aL5ZrBD42"
+          },
+          "id": "fldvRAgDvhDkiTL2Q",
+          "name": "Designer"
+        },
+        {
+          "type": "multilineText",
+          "id": "fldYtycQYu9Pv3TYe",
+          "name": "Description"
+        },
+        {
+          "type": "url",
+          "id": "fldPlrfNYu6Io2YRq",
+          "name": "Link"
+        },
+        {
+          "type": "multilineText",
+          "id": "fldM5ZVIuOIRYBA1e",
+          "name": "Notes"
+        },
+        {
+          "type": "multipleRecordLinks",
+          "options": {
+            "linkedTableId": "tblQqnkRNu7TgbXPj",
+            "isReversed": false,
+            "prefersSingleRecordLink": false,
+            "inverseLinkFieldId": "fldVoviWYw1Xn8Z2k"
+          },
+          "id": "fldWlBlHVk7Lp8XVq",
+          "name": "Orders"
+        },
+        {
+          "type": "rollup",
+          "options": {
+            "isValid": true,
+            "recordLinkFieldId": "fldWlBlHVk7Lp8XVq",
+            "fieldIdInLinkedTable": "fldKtxaK0raVsXY1k",
+            "referencedFieldIds": [],
+            "result": {
+              "type": "number",
+              "options": {
+                "precision": 0
+              }
+            }
+          },
+          "id": "fldfpsBY7iqqxnhTV",
+          "name": "Total units sold"
+        },
+        {
+          "type": "rollup",
+          "options": {
+            "isValid": true,
+            "recordLinkFieldId": "fldWlBlHVk7Lp8XVq",
+            "fieldIdInLinkedTable": "fldSmCmP0y6Jm6RYl",
+            "referencedFieldIds": [],
+            "result": {
+              "type": "currency",
+              "options": {
+                "precision": 2,
+                "symbol": "$"
+              }
+            }
+          },
+          "id": "fldzSaQBaMcVuztt7",
+          "name": "Gross sales"
+        }
+      ],
+      "views": [
+        {
+          "id": "viwUjudJZoXQg2Q0o",
+          "name": "All furniture",
+          "type": "grid"
+        },
+        {
+          "id": "viwVZ6vDTOt6gYKMg",
+          "name": "Furniture gallery",
+          "type": "gallery"
+        },
+        {
+          "id": "viwiZBWlgEIiCJu4Y",
+          "name": "Items by type",
+          "type": "grid"
+        },
+        {
+          "id": "viwtqpPEMVOvQOq9u",
+          "name": "Just office furniture",
+          "type": "grid"
+        }
+      ]
+    },
+    {
+      "id": "tblPXG8i9fpGJnFOo",
+      "name": "Vendors",
+      "primaryFieldId": "flde1PhOdFdlLup61",
+      "fields": [
+        {
+          "type": "singleLineText",
+          "id": "flde1PhOdFdlLup61",
+          "name": "Name"
+        },
+        {
+          "type": "multipleAttachments",
+          "options": {
+            "isReversed": false
+          },
+          "id": "fldqFHNUpgeYhgoD0",
+          "name": "Logo"
+        },
+        {
+          "type": "multilineText",
+          "id": "fldBDxGnF0kr2xH5G",
+          "name": "Notes"
+        },
+        {
+          "type": "multilineText",
+          "id": "fldWp5J73KV65gun5",
+          "name": "Closest showroom"
+        },
+        {
+          "type": "phoneNumber",
+          "id": "fldUfIVtDyc4tlTH9",
+          "name": "Phone number"
+        },
+        {
+          "type": "multipleRecordLinks",
+          "options": {
+            "linkedTableId": "tblEpAqatSxkiQu3q",
+            "isReversed": false,
+            "prefersSingleRecordLink": false,
+            "inverseLinkFieldId": "fldP8BIR1ak88qBP8"
+          },
+          "id": "fldgl4VxAoO3Vk1E5",
+          "name": "Sales contact"
+        },
+        {
+          "type": "url",
+          "id": "fld3fYlEMZEsCidMO",
+          "name": "Catalog link"
+        },
+        {
+          "type": "multipleRecordLinks",
+          "options": {
+            "linkedTableId": "tblLyAjO2r2Ou4TYe",
+            "isReversed": false,
+            "prefersSingleRecordLink": false,
+            "inverseLinkFieldId": "fldq8fxSg67tUWqYi"
+          },
+          "id": "fldzHOYxXm20grW7E",
+          "name": "Furniture"
+        }
+      ],
+      "views": [
+        {
+          "id": "viwCzCC5rLa9IlrQo",
+          "name": "All vendors",
+          "type": "grid"
+        }
+      ]
+    },
+    {
+      "id": "tblOjAjMQw7Pp6Q1l",
+      "name": "Clients",
+      "primaryFieldId": "fldLtqjHOmaRv8OSk",
+      "fields": [
+        {
+          "type": "singleLineText",
+          "id": "fldLtqjHOmaRv8OSk",
+          "name": "Name"
+        },
+        {
+          "type": "multipleAttachments",
+          "options": {
+            "isReversed": false
+          },
+          "id": "fldWnAeQWm0Lp5T1l",
+          "name": "Photos of space"
+        },
+        {
+          "type": "multipleRecordLinks",
+          "options": {
+            "linkedTableId": "tbls2JfiWU4cm1MWB",
+            "isReversed": false,
+            "prefersSingleRecordLink": false,
+            "inverseLinkFieldId": "fldPvpKkpn17F1Wzg"
+          },
+          "id": "fldMNy4eDtvWhgZK6",
+          "name": "Client orders"
+        },
+        {
+          "type": "multilineText",
+          "id": "fldvEPm7ZdI4yJ6RW",
+          "name": "Billing address"
+        }
+      ],
+      "views": [
+        {
+          "id": "viwXoulHPmaShaQQm",
+          "name": "All clients",
+          "type": "grid"
+        }
+      ]
+    },
+    {
+      "id": "tbls2JfiWU4cm1MWB",
+      "name": "Client orders",
+      "primaryFieldId": "fldSdxYuS6BIFOVLx",
+      "fields": [
+        {
+          "type": "formula",
+          "options": {
+            "isValid": true,
+            "referencedFieldIds": [
+              "fldPvpKkpn17F1Wzg",
+              "fldNvvsZK8Ms6gbND"
+            ],
+            "result": {
+              "type": "singleLineText"
+            }
+          },
+          "id": "fldSdxYuS6BIFOVLx",
+          "name": "Name"
+        },
+        {
+          "type": "multipleRecordLinks",
+          "options": {
+            "linkedTableId": "tblOjAjMQw7Pp6Q1l",
+            "isReversed": false,
+            "prefersSingleRecordLink": true,
+            "inverseLinkFieldId": "fldMNy4eDtvWhgZK6"
+          },
+          "id": "fldPvpKkpn17F1Wzg",
+          "name": "Client"
+        },
+        {
+          "type": "number",
+          "options": {
+            "precision": 0
+          },
+          "id": "fldNvvsZK8Ms6gbND",
+          "name": "Order no."
+        },
+        {
+          "type": "date",
+          "options": {
+            "dateFormat": {
+              "name": "us",
+              "format": "M/D/YYYY"
+            }
+          },
+          "id": "fldf1NWZKpC0A44s1",
+          "name": "Fulfill by"
+        },
+        {
+          "type": "singleSelect",
+          "options": {
+            "choices": [
+              {
+                "id": "sel4pxgWyyg4H7aM6",
+                "name": "Preparing",
+                "color": "purpleLight1"
+              },
+              {
+                "id": "sel9vpGqZbRYx0QXi",
+                "name": "Invoiced",
+                "color": "yellowLight1"
+              },
+              {
+                "id": "selEn8rrhumqN76TT",
+                "name": "Shipped",
+                "color": "tealLight1"
+              },
+              {
+                "id": "seluM7BAPLrsG6nLk",
+                "name": "Received",
+                "color": "greenLight1"
+              }
+            ]
+          },
+          "id": "fldimJ5E7I9H89EGW",
+          "name": "Status"
+        },
+        {
+          "type": "multipleRecordLinks",
+          "options": {
+            "linkedTableId": "tblQqnkRNu7TgbXPj",
+            "isReversed": false,
+            "prefersSingleRecordLink": false,
+            "inverseLinkFieldId": "fld3qxtb8vwp07wS6"
+          },
+          "id": "fldgUEKZW1N2IYd0I",
+          "name": "Order line items"
+        },
+        {
+          "type": "rollup",
+          "options": {
+            "isValid": true,
+            "recordLinkFieldId": "fldgUEKZW1N2IYd0I",
+            "fieldIdInLinkedTable": "fldSmCmP0y6Jm6RYl",
+            "referencedFieldIds": [],
+            "result": {
+              "type": "currency",
+              "options": {
+                "precision": 2,
+                "symbol": "$"
+              }
+            }
+          },
+          "id": "flde7F6qmI0yIQsEF",
+          "name": "Total order cost"
+        },
+        {
+          "type": "multipleAttachments",
+          "options": {
+            "isReversed": false
+          },
+          "id": "fldhYOSDwy1UT2QNa",
+          "name": "Invoice"
+        },
+        {
+          "type": "multipleLookupValues",
+          "options": {
+            "isValid": true,
+            "recordLinkFieldId": "fldPvpKkpn17F1Wzg",
+            "fieldIdInLinkedTable": "fldvEPm7ZdI4yJ6RW",
+            "result": {
+              "type": "multilineText"
+            }
+          },
+          "id": "fldrNOZbYT21YIiPh",
+          "name": "Bill to"
+        }
+      ],
+      "views": [
+        {
+          "id": "viwRFykf0denQsASt",
+          "name": "All client orders",
+          "type": "grid"
+        },
+        {
+          "id": "viw5XuHsGmP6Edz80",
+          "name": "Fulfill by dates",
+          "type": "calendar"
+        }
+      ]
+    },
+    {
+      "id": "tblQqnkRNu7TgbXPj",
+      "name": "Order line items",
+      "primaryFieldId": "fldPkthKRk2Pq9POk",
+      "fields": [
+        {
+          "type": "formula",
+          "options": {
+            "isValid": true,
+            "referencedFieldIds": [
+              "fld3qxtb8vwp07wS6",
+              "fldKtxaK0raVsXY1k",
+              "fldVoviWYw1Xn8Z2k"
+            ],
+            "result": {
+              "type": "singleLineText"
+            }
+          },
+          "id": "fldPkthKRk2Pq9POk",
+          "name": "Name"
+        },
+        {
+          "type": "multipleRecordLinks",
+          "options": {
+            "linkedTableId": "tblLyAjO2r2Ou4TYe",
+            "isReversed": false,
+            "prefersSingleRecordLink": true,
+            "inverseLinkFieldId": "fldWlBlHVk7Lp8XVq"
+          },
+          "id": "fldVoviWYw1Xn8Z2k",
+          "name": "Furniture item"
+        },
+        {
+          "type": "multipleLookupValues",
+          "options": {
+            "isValid": true,
+            "recordLinkFieldId": "fldVoviWYw1Xn8Z2k",
+            "fieldIdInLinkedTable": "fldgdHAbi5nAK92fF",
+            "result": {
+              "type": "currency",
+              "options": {
+                "precision": 2,
+                "symbol": "$"
+              }
+            }
+          },
+          "id": "fldLttaHOvaXvZQYq",
+          "name": "Price per unit"
+        },
+        {
+          "type": "number",
+          "options": {
+            "precision": 0
+          },
+          "id": "fldKtxaK0raVsXY1k",
+          "name": "Quantity"
+        },
+        {
+          "type": "formula",
+          "options": {
+            "isValid": true,
+            "referencedFieldIds": [
+              "fldLttaHOvaXvZQYq",
+              "fldKtxaK0raVsXY1k"
+            ],
+            "result": {
+              "type": "currency",
+              "options": {
+                "precision": 2,
+                "symbol": "$"
+              }
+            }
+          },
+          "id": "fldSmCmP0y6Jm6RYl",
+          "name": "Total cost"
+        },
+        {
+          "type": "multipleRecordLinks",
+          "options": {
+            "linkedTableId": "tbls2JfiWU4cm1MWB",
+            "isReversed": false,
+            "prefersSingleRecordLink": false,
+            "inverseLinkFieldId": "fldgUEKZW1N2IYd0I"
+          },
+          "id": "fld3qxtb8vwp07wS6",
+          "name": "Belongs to order"
+        },
+        {
+          "type": "multipleLookupValues",
+          "options": {
+            "isValid": true,
+            "recordLinkFieldId": "fldVoviWYw1Xn8Z2k",
+            "fieldIdInLinkedTable": "fldXjwhMTo9Qi0SVl",
+            "result": {
+              "type": "multipleAttachments",
+              "options": {
+                "isReversed": false
+              }
+            }
+          },
+          "id": "fldQmhVexYadj8NuK",
+          "name": "Image"
+        }
+      ],
+      "views": [
+        {
+          "id": "viwRswkUTxbTt7RSr",
+          "name": "All order items",
+          "type": "grid"
+        }
+      ]
+    },
+    {
+      "id": "tbliA6axBVBsWc433",
+      "name": "Designers",
+      "primaryFieldId": "fld9pW0PNTYZVfEdq",
+      "fields": [
+        {
+          "type": "singleLineText",
+          "id": "fld9pW0PNTYZVfEdq",
+          "name": "Name"
+        },
+        {
+          "type": "multipleAttachments",
+          "options": {
+            "isReversed": false
+          },
+          "id": "fldiIsAKBOWVEEpI4",
+          "name": "Photo"
+        },
+        {
+          "type": "multilineText",
+          "id": "fldiPWGRVk1vEXmTE",
+          "name": "Bio"
+        },
+        {
+          "type": "multipleRecordLinks",
+          "options": {
+            "linkedTableId": "tblLyAjO2r2Ou4TYe",
+            "isReversed": false,
+            "prefersSingleRecordLink": false,
+            "inverseLinkFieldId": "fldvRAgDvhDkiTL2Q"
+          },
+          "id": "fldsHaW5aL5ZrBD42",
+          "name": "Furniture"
+        }
+      ],
+      "views": [
+        {
+          "id": "viw94HmhQNJ9YoP81",
+          "name": "All designers",
+          "type": "grid"
+        },
+        {
+          "id": "viwVBsh5YkfdAU2Bc",
+          "name": "Designer gallery",
+          "type": "gallery"
+        }
+      ]
+    },
+    {
+      "id": "tblEpAqatSxkiQu3q",
+      "name": "Vendor contacts",
+      "primaryFieldId": "fldBMDGTgwSDChnmr",
+      "fields": [
+        {
+          "type": "singleLineText",
+          "id": "fldBMDGTgwSDChnmr",
+          "name": "Name"
+        },
+        {
+          "type": "multipleRecordLinks",
+          "options": {
+            "linkedTableId": "tblPXG8i9fpGJnFOo",
+            "isReversed": false,
+            "prefersSingleRecordLink": false,
+            "inverseLinkFieldId": "fldgl4VxAoO3Vk1E5"
+          },
+          "id": "fldP8BIR1ak88qBP8",
+          "name": "Vendors"
+        },
+        {
+          "type": "phoneNumber",
+          "id": "fldxZFc0f4JYaO54n",
+          "name": "Phone number"
+        },
+        {
+          "type": "email",
+          "id": "fldmy6Y3vBZSxUvIp",
+          "name": "Email"
+        }
+      ],
+      "views": [
+        {
+          "id": "viw171gxkm5CpKIle",
+          "name": "All contacts",
+          "type": "grid"
+        }
+      ]
+    }
+  ]
+}

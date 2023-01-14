@@ -56,7 +56,6 @@ export const ReadonlyFieldTypes = z.enum([
   'lastModifiedBy',
   'lastModifiedTime',
   'multipleLookupValues',
-  'multipleRecordLinks',
   'rollup',
 ])
 

@@ -1,5 +1,5 @@
 import { Command, Flags } from '@oclif/core'
-import { camelCase, paramCase, pascalCase } from 'change-case'
+import { paramCase, pascalCase } from 'change-case'
 import * as dotenv from 'dotenv'
 import fs from 'fs-extra'
 import path from 'node:path'
@@ -14,7 +14,7 @@ import {
   getTsType,
   getZodType,
 } from '../utils/field-mappings'
-import { getFieldEnumName, hasAttachmentField, hasCollaboratorField } from '../utils/helpers'
+import { getFieldEnumName, hasAttachmentField, hasCollaboratorField, isReadonlyField } from '../utils/helpers'
 import httpRequest from '../utils/http-request'
 
 dotenv.config()
@@ -68,7 +68,7 @@ Reads environment from .env file if present in current working directory.`
   private async fetchAirtableApi<T>(reqPath: string): Promise<T> {
     if (!this.accessToken) {
       this.error(
-        'No Airtable Access Token token provided. Please provide one with the -T flag or set the AIRTABLE_TYPEGEN_ACCESS_TOKEN environment variable.',
+        'No Airtable Access Token token provided. Make sure to set the AIRTABLE_TYPEGEN_ACCESS_TOKEN environment variable.',
         {
           exit: 1,
         },
@@ -186,9 +186,13 @@ Reads environment from .env file if present in current working directory.`
       lines.push(`export const ${tableSchemaName} = z.object({`)
 
       for (const field of table.fields) {
-        const fieldName = camelCase(field.name)
+        const fieldName = field.name
         const fieldType = getZodType(table, field)
-        lines.push(`  ${fieldName}: ${fieldType},`)
+        // NOTE: Airtable API will NOT return a field if it's blank
+        // so almost everything has to be marked optional unfortunately
+        const isReadonly = isReadonlyField(field)
+        const suffix = isReadonly ? ',' : '.optional(),'
+        lines.push(`  '${fieldName}': ${fieldType}${suffix}`)
       }
 
       lines.push('})')
@@ -217,9 +221,12 @@ Reads environment from .env file if present in current working directory.`
       lines.push(`export interface ${tableName} {`)
 
       for (const field of table.fields) {
-        const fieldName = camelCase(field.name)
+        const fieldName = field.name
         const fieldType = getTsType(field)
-        lines.push(`  ${fieldName}: ${fieldType}`)
+        // NOTE: Airtable API will NOT return a field if it's blank
+        // so almost everything has to be marked optional unfortunately
+        const isReadonly = isReadonlyField(field)
+        lines.push(`  '${fieldName}'${isReadonly ? '' : '?'}: ${fieldType}`)
       }
 
       lines.push('}')

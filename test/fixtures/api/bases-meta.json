@@ -1,0 +1,19 @@
+{
+  "bases": [
+    {
+      "id": "app123456789ABCDE",
+      "name": "Apartments",
+      "permissionLevel": "create"
+    },
+    {
+      "id": "app00011122233344",
+      "name": "Sprint Planning",
+      "permissionLevel": "create"
+    },
+    {
+      "id": "app123",
+      "name": "Product catalog",
+      "permissionLevel": "create"
+    }
+  ]
+}

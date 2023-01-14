@@ -4,9 +4,11 @@ import fse from 'fs-extra'
 import fs from 'node:fs'
 
 import { AIRTABLE_API_BASE, AIRTABLE_API_BASE_META_PATH, AIRTABLE_API_VERSION } from '../../src/utils/constants'
+import * as schemas from '../fixtures/output/product-catalog-zod'
 
-import basesMeta from '../fixtures/bases-meta.json'
-import tablesMeta from '../fixtures/tables-meta.json'
+import basesMeta from '../fixtures/api/bases-meta.json'
+import productCatalogData from '../fixtures/api/product-catalog-data.json'
+import tablesMeta from '../fixtures/api/tables-meta.json'
 
 jest.mock('fs-extra')
 
@@ -17,12 +19,16 @@ const tableMetaPrefix = `${AIRTABLE_API_VERSION}${AIRTABLE_API_BASE_META_PATH}`
 /** Normalize line endings so we can compare on Windows & Unix */
 const nrmlz = (str: string, normalized = '\r\n') => str.replace(/\r?\n/g, normalized)
 
-const tsGeneratedFile = nrmlz(fs.readFileSync('test/fixtures/ts-generated.ts.txt', 'utf-8'))
-const zodGeneratedFile = nrmlz(fs.readFileSync('test/fixtures/zod-generated.ts.txt', 'utf-8'))
+const tsGeneratedSrc = nrmlz(fs.readFileSync('test/fixtures/output/product-catalog-ts.ts', 'utf-8'))
+const zodGeneratedSrc = nrmlz(fs.readFileSync('test/fixtures/output/product-catalog-zod.ts', 'utf-8'))
+
+// So that the command doesn't complain about missing env var
+process.env.AIRTABLE_TYPEGEN_ACCESS_TOKEN = 'my-secret-token'
 
 describe('e2e', () => {
-  const baseId = basesMeta.bases[0].id
-  process.env.AIRTABLE_TYPEGEN_ACCESS_TOKEN = 'my-secret-token'
+  // Pull the base ID from the fixtures
+  const baseMeta = basesMeta.bases[2]
+  const baseId = baseMeta.id
 
   beforeEach(() => {
     jest.clearAllMocks()
@@ -35,10 +41,10 @@ describe('e2e', () => {
     })
     .stdout()
     .command(['.', baseId])
-    .it('successfuly generates typescript interfaces', () => {
+    .it('Successfuly generates TypeScript interfaces', () => {
       expect(mockedWriteFile.mock.calls).toHaveLength(1)
-      expect(mockedWriteFile.mock.lastCall?.[0]).toContain('apartments.ts')
-      expect(nrmlz(mockedWriteFile.mock.lastCall?.[1].toString() ?? '')).toBe(tsGeneratedFile)
+      expect(mockedWriteFile.mock.lastCall?.[0]).toContain('product-catalog.ts')
+      expect(nrmlz(mockedWriteFile.mock.lastCall?.[1].toString() ?? '')).toBe(tsGeneratedSrc)
     })
 
   test
@@ -48,9 +54,17 @@ describe('e2e', () => {
     })
     .stdout()
     .command(['.', baseId, '-z'])
-    .it('successfuly generates zod schemas', () => {
+    .it('Successfuly generates Zod schemas', () => {
       expect(mockedWriteFile.mock.calls).toHaveLength(1)
-      expect(mockedWriteFile.mock.lastCall?.[0]).toContain('apartments.ts')
-      expect(nrmlz(mockedWriteFile.mock.lastCall?.[1].toString() ?? '')).toBe(zodGeneratedFile)
+      expect(mockedWriteFile.mock.lastCall?.[0]).toContain('product-catalog.ts')
+      expect(nrmlz(mockedWriteFile.mock.lastCall?.[1].toString() ?? '')).toBe(zodGeneratedSrc)
     })
+
+  test.it('Zod schema parses Airtable API response', async () => {
+    expect(async () => {
+      for (const rec of productCatalogData.records) {
+        schemas.FurnitureSchema.parse(rec.fields)
+      }
+    }).not.toThrow()
+  })
 })
