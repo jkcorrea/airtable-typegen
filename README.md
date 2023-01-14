@@ -8,7 +8,7 @@ Generate TypeScript types & [Zod](https://github.com/colinhacks/zod) schemas fro
 [![Downloads/week](https://img.shields.io/npm/dw/airtable-typegen.svg)](https://npmjs.org/package/airtable-typegen)
 [![License](https://img.shields.io/npm/l/airtable-typegen.svg)](https://github.com/jkcorrea/airtable-typegen/blob/main/package.json)
 
-> :warning: **This has not be thoroughly tested with Airtable bases in the wild.** Please use carefully and sanity check the generated code before using in production! Contributions & bug reports are appreciated :)
+> :warning: **This tool is in ALPHA. It has not be thoroughly tested with Airtable bases in the wild.** Please use carefully and sanity check the generated code before using in production! Contributions & bug reports are appreciated :)
 
 
 ## Quickstart
@@ -103,3 +103,10 @@ Alternatively, you could combine it into your `dev` and `build` commands (withs 
   }
 }
 ```
+
+## TODO
+- [ ] Show how types & Zod schemas can be used (currently need to parse each row individually)
+- [ ] Add a thin runtime wrapper around Airtable SDK to parse `FieldSet`s with proper types
+- [ ] Improve `example/`
+
+I probably won't work on this much until I absolutely need it. Sorry. Welcome any and all contributions!
