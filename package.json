@@ -17,7 +17,7 @@
     "/oclif.manifest.json"
   ],
   "dependencies": {
-    "@oclif/core": "^1.24.0",
+    "@oclif/core": "^2.7.1",
     "@types/fs-extra": "^11.0.1",
     "change-case": "^4.1.2",
     "dotenv": "^16.0.3",
