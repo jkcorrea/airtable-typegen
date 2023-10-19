@@ -9,7 +9,7 @@ export function getZodType(table: TableMetadata, field: FieldMetadata) {
     case 'barcode':
       return 'z.object({ text: z.string(), type: z.string() })'
     case 'button':
-      return 'z.object({ label: z.string() }).merge(z.record(z.unknown()))'
+      return 'z.object({ label: z.string() })'
     case 'checkbox':
       return 'z.boolean()'
     case 'count':
@@ -138,9 +138,9 @@ export function getTsType(field: FieldMetadata) {
     case 'multipleRecordLinks':
       return 'Array<string>'
     case 'singleSelect':
-      return field.options.choices.map((choice) => `'${choice.name}'`).join(' | ')
+      return field.options.choices.map((choice) => `'${choice.name.replace("'", "\\\'")}'`).join(' | ')
     case 'multipleSelects':
-      return `Array<${field.options.choices.map((choice) => `'${choice.name}'`).join(' | ')}>`
+      return `Array<${field.options.choices.map((choice) => `'${choice.name.replace("'", "\\\'")}'`).join(' | ')}>`
     // TODO not sure what this one is
     case 'externalSyncSource':
       return 'unknown'

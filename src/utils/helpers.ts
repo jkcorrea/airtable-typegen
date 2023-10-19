@@ -18,5 +18,5 @@ export function hasAttachmentField(fields: FieldMetadata[]) {
 }
 
 export function getFieldEnumName(table: TableMetadata, field: FieldMetadata) {
-  return `${pascalCase(table.name)}${pascalCase(field.name)}`
+  return `${pascalCase(table.name)}${pascalCase(field.name.replace('\'', '\\\''))}`
 }

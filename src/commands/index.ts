@@ -174,7 +174,7 @@ Reads environment from .env file if present in current working directory.`
           const enumName = getFieldEnumName(table, field)
           lines.push(`export const ${enumName} = z.enum([`)
           for (const choice of field.options.choices) {
-            lines.push(`  '${choice.name}',`)
+            lines.push(`  '${choice.name.replace("'", "\\\'")}',`)
           }
           lines.push('])')
           lines.push('')
@@ -192,7 +192,7 @@ Reads environment from .env file if present in current working directory.`
         // so almost everything has to be marked optional unfortunately
         const isReadonly = isReadonlyField(field)
         const suffix = isReadonly ? ',' : '.optional(),'
-        lines.push(`  '${fieldName}': ${fieldType}${suffix}`)
+        lines.push(`  '${fieldName.replace("'", "\\\'")}': ${fieldType}${suffix}`)
       }
 
       lines.push('})')
@@ -226,7 +226,7 @@ Reads environment from .env file if present in current working directory.`
         // NOTE: Airtable API will NOT return a field if it's blank
         // so almost everything has to be marked optional unfortunately
         const isReadonly = isReadonlyField(field)
-        lines.push(`  '${fieldName}'${isReadonly ? '' : '?'}: ${fieldType}`)
+        lines.push(`  '${fieldName.replace("'", '\\\'')}'${isReadonly ? '' : '?'}: ${fieldType}`)
       }
 
       lines.push('}')
