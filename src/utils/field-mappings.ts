@@ -9,7 +9,7 @@ export function getZodType(table: TableMetadata, field: FieldMetadata) {
     case 'barcode':
       return 'z.object({ text: z.string(), type: z.string() })'
     case 'button':
-      return 'z.object({ label: z.string() })'
+      return 'z.object({ label: z.string(), url: z.string().optional() })'
     case 'checkbox':
       return 'z.boolean()'
     case 'count':
@@ -45,8 +45,9 @@ export function getZodType(table: TableMetadata, field: FieldMetadata) {
     case 'richText':
       return 'z.string()'
     case 'rollup':
+      return 'z.union([z.string(), z.number(), z.array(z.string())])'
     case 'formula':
-      return 'z.string().or(z.number())'
+      return 'z.union([z.string(), z.number()])'
     case 'multipleCollaborators':
       return 'z.array(AirtableCollaboratorSchema)'
     case 'multipleAttachments':
@@ -111,12 +112,13 @@ export function getTsType(field: FieldMetadata) {
     case 'richText':
       return 'string'
     case 'rollup':
+      return 'number | string | Array<string>'
     case 'formula':
       return 'number | string'
     case 'barcode':
       return `{ text: string; type: string; }`
     case 'button':
-      return `{ label: string; } & Record<string, unknown>`
+      return `{ label: string; url?: string; } }`
     case 'checkbox':
       return 'boolean'
     case 'createdBy':
@@ -134,7 +136,7 @@ export function getTsType(field: FieldMetadata) {
     case 'multipleAttachments':
       return 'Array<IAirtableAttachment>'
     case 'multipleLookupValues':
-      return 'Array<string | boolean | number | Record<string, unknown>>'
+      return 'Array<string | boolean | number>'
     case 'multipleRecordLinks':
       return 'Array<string>'
     case 'singleSelect':
