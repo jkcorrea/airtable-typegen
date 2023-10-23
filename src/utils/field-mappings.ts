@@ -53,7 +53,7 @@ export function getZodType(table: TableMetadata, field: FieldMetadata) {
     case 'multipleAttachments':
       return 'z.array(AirtableAttachmentSchema)'
     case 'multipleLookupValues':
-      return 'z.union([z.array(z.string()), z.array(z.boolean()), z.array(z.number()), z.array(z.record(z.unknown()))])'
+      return 'z.union([z.array(z.string()), z.array(z.boolean()), z.array(z.number()), z.array(z.record(z.unknown())), z.array(IAirtableAttachment)])'
     case 'multipleRecordLinks':
       return 'z.array(z.string())'
     case 'singleSelect':
@@ -93,6 +93,7 @@ export const AirtableAttachmentSchema = z.object({
     full: AirtableThumbnailSchema,
   }).optional(),
 })`
+
 
 export function getTsType(field: FieldMetadata) {
   switch (field.type) {
@@ -136,7 +137,7 @@ export function getTsType(field: FieldMetadata) {
     case 'multipleAttachments':
       return 'Array<IAirtableAttachment>'
     case 'multipleLookupValues':
-      return 'Array<string | boolean | number>'
+      return 'Array<string | boolean | number | IAirtableAttachment>'
     case 'multipleRecordLinks':
       return 'Array<string>'
     case 'singleSelect':
