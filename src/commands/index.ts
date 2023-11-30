@@ -2,6 +2,7 @@ import { Command, Flags } from '@oclif/core'
 import { paramCase, pascalCase } from 'change-case'
 import * as dotenv from 'dotenv'
 import fs from 'fs-extra'
+import { table } from 'node:console'
 import path from 'node:path'
 
 import { BaseListMetadataSchema, BaseMetadata, TableListMetadataSchema, TableMetadata } from '../schemas/api'
@@ -45,6 +46,16 @@ Reads environment from .env file if present in current working directory.`
     zod: Flags.boolean({
       char: 'z',
       description: 'Generate Zod schemas instead of TypeScript definitions',
+      required: false,
+    }),
+    mapping: Flags.boolean({
+      char: 'm',
+      description: 'Generate field mappings',
+      required: false,
+    }),
+    js: Flags.boolean({
+      char: 'j',
+      description: 'Generate JS field mappings only',
       required: false,
     }),
     tables: Flags.string({
@@ -95,13 +106,16 @@ Reads environment from .env file if present in current working directory.`
     let data: string
     if (flags.zod) {
       this.log('Generating Zod schemas')
-      data = await this.generateZodSchemas(baseMeta, tableMeta)
+      data = await this.generateZodSchemas(baseMeta, tableMeta, flags.mapping)
+    } else if (flags.js) {
+      this.log('Generating JavaScript mappings')
+      data = await this.generateJSFieldMappings(baseMeta, tableMeta)
     } else {
       this.log('Generating TypeScript definitions')
-      data = await this.generateTSDefinitions(baseMeta, tableMeta)
+      data = await this.generateTSDefinitions(baseMeta, tableMeta, flags.mapping)
     }
 
-    const filepath = flags.output ?? `${paramCase(baseMeta.name)}.ts`
+    const filepath = flags.output ?? `${paramCase(baseMeta.name)}.${flags.js ? 'js' : 'ts'}`
     const output = path.resolve(process.cwd(), filepath)
     await fs.ensureFile(output)
     await fs.writeFile(output, data)
@@ -152,7 +166,7 @@ Reads environment from .env file if present in current working directory.`
     return baseMeta
   }
 
-  private async generateZodSchemas(base: BaseMetadata, tables: TableMetadata[]) {
+  private async generateZodSchemas(base: BaseMetadata, tables: TableMetadata[], includeMapping: boolean) {
     const lines: string[] = []
     lines.push("import { z } from 'zod'")
     lines.push('')
@@ -167,7 +181,10 @@ Reads environment from .env file if present in current working directory.`
       lines.push('')
     }
 
+    const tableIds: string[] = [];
+    tableIds.push(`export const TableIds = {`);
     for (const table of tables) {
+      tableIds.push(`  ${pascalCase(table.name)}: '${table.id}',`);
       // Generate enums for all select fields of this table
       for (const field of table.fields) {
         if (field.type === 'singleSelect' || field.type === 'multipleSelects') {
@@ -198,12 +215,50 @@ Reads environment from .env file if present in current working directory.`
       lines.push('})')
       lines.push(`export type ${tableTypeName} = z.infer<typeof ${tableSchemaName}>`)
       lines.push('')
+
+      if (includeMapping) {
+        lines.push(`export const ${tableTypeName}FieldIdMapping = {`)
+
+        for (const field of table.fields) {
+          const fieldName = field.name
+          const fieldId = field.id
+          lines.push(`  '${fieldName.replace("'", '\\\'')}': '${fieldId}',`)
+        }
+
+        lines.push('} as const;')
+        lines.push('')
+      }
+    }
+
+    tableIds.push(`} as const;`);
+
+    lines.push(...tableIds);
+    lines.push('');
+
+    return lines.join('\n')
+  }
+
+  private async generateJSFieldMappings(base: BaseMetadata, tables: TableMetadata[]) {
+    const lines: string[] = []
+
+    for (const table of tables) {
+      const tableName = pascalCase(table.name)
+      lines.push(`export const ${tableName}FieldIdMapping = {`)
+
+      for (const field of table.fields) {
+        const fieldName = field.name
+        const fieldId = field.id
+        lines.push(`  '${fieldName.replace("'", '\\\'')}': '${fieldId}',`)
+      }
+
+      lines.push('};');
+      lines.push('');
     }
 
     return lines.join('\n')
   }
 
-  private async generateTSDefinitions(base: BaseMetadata, tables: TableMetadata[]) {
+  private async generateTSDefinitions(base: BaseMetadata, tables: TableMetadata[], includeMapping: boolean) {
     const lines: string[] = []
 
     const allFields = tables.map((t) => t.fields).flat()
@@ -231,7 +286,23 @@ Reads environment from .env file if present in current working directory.`
 
       lines.push('}')
       lines.push('')
+
+      if (includeMapping) {
+        lines.push(`export const ${tableName}FieldIdMapping = {`)
+
+        for (const field of table.fields) {
+          const fieldName = field.name
+          const fieldId = field.id
+          lines.push(`  '${fieldName.replace("'", '\\\'')}': '${fieldId}',`)
+        }
+
+        lines.push('} as const;')
+        lines.push('')
+      }
     }
+
+    lines.push('}')
+    lines.push('')
 
     return lines.join('\n')
   }

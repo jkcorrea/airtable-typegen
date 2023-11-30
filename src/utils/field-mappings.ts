@@ -119,7 +119,7 @@ export function getTsType(field: FieldMetadata) {
     case 'barcode':
       return `{ text: string; type: string; }`
     case 'button':
-      return `{ label: string; url?: string; } }`
+      return `{ label: string; url?: string; }`
     case 'checkbox':
       return 'boolean'
     case 'createdBy':
