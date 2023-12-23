@@ -153,6 +153,64 @@ export function getTsType(field: FieldMetadata) {
   throw new Error(`Unrecognized field type: ${field.type} (on field '${field.name}')`)
 }
 
+export function getPythonType(field: FieldMetadata): string {
+  switch (field.type) {
+    case 'number':
+    case 'count':
+    case 'currency':
+    case 'percent':
+    case 'rating':
+    case 'autoNumber':
+    case 'duration':
+      return 'float';
+    case 'email':
+    case 'multilineText':
+    case 'phoneNumber':
+    case 'singleLineText':
+    case 'url':
+    case 'richText':
+      return 'str';
+    case 'rollup':
+      return 'Union[float, str, list[str]]';
+    case 'formula':
+      return 'Union[float, str]';
+    case 'barcode':
+      return '{text: str, type: str}';
+    case 'button':
+      return '{label: str, url?: str}';
+    case 'checkbox':
+      return 'bool';
+    case 'createdBy':
+    case 'lastModifiedBy':
+    case 'singleCollaborator':
+      return 'IAirtableCollaborator';
+    case 'multipleCollaborators':
+      return 'list[IAirtableCollaborator]';
+    case 'date':
+    case 'dateTime':
+    case 'createdTime':
+    case 'lastModifiedTime':
+      return 'str';
+    case 'multipleAttachments':
+      return 'list[IAirtableAttachment]';
+    case 'multipleLookupValues':
+      return 'list[Union[str, bool, float, IAirtableAttachment]]';
+    case 'multipleRecordLinks':
+      return 'list[str]';
+    case 'singleSelect':
+      const choices = field.options?.choices.map((choice) => `'${choice.name.replace("'", "\\\'")}'`);
+      return choices ? `Union[${choices.join(', ')}]` : 'str';
+    case 'multipleSelects':
+      const multiChoices = field.options?.choices.map((choice) => `'${choice.name.replace("'", "\\\'")}'`);
+      return multiChoices ? `list[Union[${multiChoices.join(', ')}]]` : 'list[str]';
+    case 'externalSyncSource':
+      return 'Any'; // Replace 'Any' with the appropriate type for unknown in Python
+    default:
+      return 'Any';
+  }
+}
+
+
 export const CollaboratorTsTmpl = `export interface IAirtableCollaborator {
   id: string
   email: string
@@ -177,3 +235,28 @@ export interface IAirtableAttachment {
     full: IAirtableThumbnail
   }
 }`
+
+export const CollaboratorPyImpl = `class IAirtableCollaborator(TypedDict):
+  id: str
+  email: str
+  name: str
+`
+
+export const AttachmentPyImpl = `class IAirtableThumbnail(TypedDict):
+  url: str
+  width: int
+  height: int
+
+class IAirtableThumbnails(TypedDict):
+  small: IAirtableThumbnail
+  large: IAirtableThumbnail
+  full: IAirtableThumbnail
+
+class IAirtableAttachment(TypedDict):
+  id: str
+  url: str
+  filename: str
+  size: int
+  type: str
+  thumbnails: Optional[IAirtableThumbnails]
+`

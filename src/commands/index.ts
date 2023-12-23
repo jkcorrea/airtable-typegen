@@ -8,10 +8,13 @@ import path from 'node:path'
 import { BaseListMetadataSchema, BaseMetadata, TableListMetadataSchema, TableMetadata } from '../schemas/api'
 import { AIRTABLE_API_BASE, AIRTABLE_API_BASE_META_PATH, AIRTABLE_API_VERSION } from '../utils/constants'
 import {
+  AttachmentPyImpl,
   AttachmentTsTmpl,
   AttachmentZodTmpl,
+  CollaboratorPyImpl,
   CollaboratorTsTmpl,
   CollaboratorZodTmpl,
+  getPythonType,
   getTsType,
   getZodType,
 } from '../utils/field-mappings'
@@ -56,6 +59,11 @@ Reads environment from .env file if present in current working directory.`
     js: Flags.boolean({
       char: 'j',
       description: 'Generate JS field mappings only',
+      required: false,
+    }),
+    py: Flags.boolean({
+      char: 'p',
+      description: 'Generate Python field mappings only',
       required: false,
     }),
     tables: Flags.string({
@@ -110,12 +118,15 @@ Reads environment from .env file if present in current working directory.`
     } else if (flags.js) {
       this.log('Generating JavaScript mappings')
       data = await this.generateJSFieldMappings(baseMeta, tableMeta)
+    } else if (flags.py) {
+      this.log('Generating Python mappings')
+      data = await this.generatePythonFieldMappings(baseMeta, tableMeta)
     } else {
       this.log('Generating TypeScript definitions')
       data = await this.generateTSDefinitions(baseMeta, tableMeta, flags.mapping)
     }
 
-    const filepath = flags.output ?? `${paramCase(baseMeta.name)}.${flags.js ? 'js' : 'ts'}`
+    const filepath = flags.output ?? `${paramCase(baseMeta.name)}.${flags.js ? 'js' : flags.py ? 'py' : 'ts'}`
     const output = path.resolve(process.cwd(), filepath)
     await fs.ensureFile(output)
     await fs.writeFile(output, data)
@@ -169,6 +180,7 @@ Reads environment from .env file if present in current working directory.`
   private async generateZodSchemas(base: BaseMetadata, tables: TableMetadata[], includeMapping: boolean) {
     const lines: string[] = []
     lines.push("import { z } from 'zod'")
+    
     lines.push('')
 
     const allFields = tables.map((t) => t.fields).flat()
@@ -182,9 +194,14 @@ Reads environment from .env file if present in current working directory.`
     }
 
     const tableIds: string[] = [];
-    tableIds.push(`export const TableIds = {`);
+    const tableIdToObjectMappings: string[] = [];
+
+    if (includeMapping) {
+      tableIds.push(`export const TableIds = {`);
+      tableIdToObjectMappings.push(`export const TableIdToObjectMapping = {`);
+    }
+
     for (const table of tables) {
-      tableIds.push(`  ${pascalCase(table.name)}: '${table.id}',`);
       // Generate enums for all select fields of this table
       for (const field of table.fields) {
         if (field.type === 'singleSelect' || field.type === 'multipleSelects') {
@@ -216,8 +233,12 @@ Reads environment from .env file if present in current working directory.`
       lines.push(`export type ${tableTypeName} = z.infer<typeof ${tableSchemaName}>`)
       lines.push('')
 
-      if (includeMapping) {
-        lines.push(`export const ${tableTypeName}FieldIdMapping = {`)
+      if (includeMapping) {        
+        const mappingTableName = `${tableTypeName}FieldIdMapping`;
+        
+        tableIds.push(`  '${pascalCase(table.name)}': '${table.id}',`);
+        tableIdToObjectMappings.push(`  '${table.id}': ${mappingTableName},`)
+        lines.push(`export const ${mappingTableName} = {`)
 
         for (const field of table.fields) {
           const fieldName = field.name
@@ -230,9 +251,15 @@ Reads environment from .env file if present in current working directory.`
       }
     }
 
-    tableIds.push(`} as const;`);
+    if (includeMapping) {
+      tableIds.push(`} as const;`);
+      tableIdToObjectMappings.push(`} as const;`);
+    }
 
     lines.push(...tableIds);
+    lines.push('');
+
+    lines.push(...tableIdToObjectMappings);
     lines.push('');
 
     return lines.join('\n')
@@ -240,10 +267,19 @@ Reads environment from .env file if present in current working directory.`
 
   private async generateJSFieldMappings(base: BaseMetadata, tables: TableMetadata[]) {
     const lines: string[] = []
+    const tableIds: string[] = [];
+    const tableIdToObjectMappings: string[] = [];
+    
+    tableIds.push(`export const TableIds = {`);
+    tableIdToObjectMappings.push(`export const TableIdToObjectMapping = {`);
 
     for (const table of tables) {
       const tableName = pascalCase(table.name)
-      lines.push(`export const ${tableName}FieldIdMapping = {`)
+      
+      const mappingTableName = `${tableName}FieldIdMapping`;
+      lines.push(`export const ${mappingTableName} = {`)
+      tableIds.push(`  '${table.name}': '${table.id}',`);
+      tableIdToObjectMappings.push(`  '${table.id}': ${mappingTableName},`)
 
       for (const field of table.fields) {
         const fieldName = field.name
@@ -255,11 +291,72 @@ Reads environment from .env file if present in current working directory.`
       lines.push('');
     }
 
+    tableIds.push(`};`);
+    tableIdToObjectMappings.push(`};`);
+
+    lines.push(...tableIds);
+    lines.push('');
+    lines.push(...tableIdToObjectMappings);
+    lines.push('');
+
+    return lines.join('\n')
+  }
+
+  private async generatePythonFieldMappings(base: BaseMetadata, tables: TableMetadata[]) {
+    const lines: string[] = []
+    const tableIds: string[] = [];
+    const tableIdToObjectMappings: string[] = [];
+
+    lines.push("from typing import Optional, TypedDict")
+
+    const allFields = tables.map((t) => t.fields).flat()
+    if (hasAttachmentField(allFields)) {
+      lines.push(AttachmentPyImpl)
+      lines.push('')
+    }
+    if (hasCollaboratorField(allFields)) {
+      lines.push(CollaboratorPyImpl)
+      lines.push('')
+    }
+    
+    tableIds.push(`TableIds = {`);
+    tableIdToObjectMappings.push(`TableIdToObjectMapping = {`);
+
+    for (const table of tables) {
+      const tableName = pascalCase(table.name)
+      
+      const mappingTableName = `${tableName}FieldIdMapping`;
+      lines.push(`${mappingTableName} = {`)
+      tableIds.push(`  '${pascalCase(table.name)}': '${table.id}',`);
+      tableIdToObjectMappings.push(`  '${table.id}': ${mappingTableName},`)
+
+      for (const field of table.fields) {
+        const fieldName = field.name
+        const fieldId = field.id
+        lines.push(`  '${fieldName.replace("'", '\\\'')}': '${fieldId}',`)
+      }
+
+      lines.push('};');
+      lines.push('');
+    }
+
+    tableIds.push(`};`);
+    tableIdToObjectMappings.push(`}`);
+
+    lines.push(...tableIds);
+    lines.push('');
+    lines.push(...tableIdToObjectMappings);
+    lines.push('');
+
     return lines.join('\n')
   }
 
   private async generateTSDefinitions(base: BaseMetadata, tables: TableMetadata[], includeMapping: boolean) {
     const lines: string[] = []
+
+    lines.push('// @ts-nocheck')
+    lines.push(`// We are ignoring the type errors related to FieldSet this because AirTables SDKs don't have a correct value for the FieldSet`);
+    lines.push("import { FieldSet } from 'airtable'");
 
     const allFields = tables.map((t) => t.fields).flat()
     if (hasAttachmentField(allFields)) {
@@ -271,9 +368,15 @@ Reads environment from .env file if present in current working directory.`
       lines.push('')
     }
 
+    const tableIds: string[] = [];
+    const tableIdToObjectMappings: string[] = [];
+
+    tableIds.push(`export const TableIds = {`);
+    tableIdToObjectMappings.push(`export const TableIdToObjectMapping = {`);
+
     for (const table of tables) {
       const tableName = pascalCase(table.name)
-      lines.push(`export interface ${tableName} {`)
+      lines.push(`export interface ${tableName} extends FieldSet {`);
 
       for (const field of table.fields) {
         const fieldName = field.name
@@ -287,22 +390,32 @@ Reads environment from .env file if present in current working directory.`
       lines.push('}')
       lines.push('')
 
-      if (includeMapping) {
-        lines.push(`export const ${tableName}FieldIdMapping = {`)
+      const mappingTableName = `${tableName}FieldIdMapping`;
+      lines.push(`export const ${mappingTableName} = {`)
+      tableIds.push(`  '${table.name}': '${table.id}',`);
+      tableIdToObjectMappings.push(`  '${table.id}': ${mappingTableName},`)
 
-        for (const field of table.fields) {
-          const fieldName = field.name
-          const fieldId = field.id
-          lines.push(`  '${fieldName.replace("'", '\\\'')}': '${fieldId}',`)
-        }
-
-        lines.push('} as const;')
-        lines.push('')
+      for (const field of table.fields) {
+        const fieldName = field.name
+        const fieldId = field.id
+        lines.push(`  '${fieldName.replace("'", '\\\'')}': '${fieldId}',`)
       }
+
+      lines.push('} as const;')
+      lines.push('')
     }
 
-    lines.push('}')
-    lines.push('')
+    tableIds.push(`} as const;`);
+    tableIdToObjectMappings.push(`} as const;`);
+
+    lines.push(...tableIds);
+    lines.push('');
+    lines.push(...tableIdToObjectMappings);
+    lines.push('');
+
+    lines.push('export type TableKey = keyof typeof TableIds;');
+    lines.push('export type TableId = typeof TableIds[TableKey];');
+    lines.push('export type TableType = typeof TableIdToObjectMapping[TableId];');
 
     return lines.join('\n')
   }
