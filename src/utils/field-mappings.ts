@@ -1,5 +1,5 @@
 import { TableMetadata } from '../schemas/api'
-import { FieldMetadata } from '../schemas/fields'
+import { FieldMetadata, FormulaFieldType, RollupFieldType } from '../schemas/fields'
 import { getFieldEnumName } from './helpers'
 
 export function getZodType(table: TableMetadata, field: FieldMetadata) {
@@ -113,9 +113,11 @@ export function getTsType(field: FieldMetadata) {
     case 'richText':
       return 'string'
     case 'rollup':
-      return 'number | string | Array<string>'
+      return ['number', 'currency', 'percent'].includes(field.options.result?.type || "") ? 'number' : 'string | Array<string>';
+      // return 'number | string | Array<string>'
     case 'formula':
-      return 'number | string'
+      return ['number', 'currency', 'percent'].includes(field.options.result?.type || "") ? 'number' : 'string';
+      // return 'number | string'
     case 'barcode':
       return `{ text: string; type: string; }`
     case 'button':

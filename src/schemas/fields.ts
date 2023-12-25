@@ -39,7 +39,7 @@ export const AllFieldTypes = z.enum([
   'singleLineText',
   'singleSelect',
   'url',
-])
+]);
 
 /**
  * Computed fields cannot be updated via the API.
@@ -57,7 +57,7 @@ export const ReadonlyFieldTypes = z.enum([
   'lastModifiedTime',
   'multipleLookupValues',
   'rollup',
-])
+]);
 
 /**
  * Basic field types do not required any extra metadata to infer their TypeScript/Zod type
@@ -70,7 +70,6 @@ export const BasicFieldTypes = z.enum([
   'count',
   'createdBy',
   'email',
-  'formula',
   'lastModifiedBy',
   'multilineText',
   'multipleAttachments',
@@ -79,29 +78,43 @@ export const BasicFieldTypes = z.enum([
   'multipleRecordLinks',
   'phoneNumber',
   'richText',
-  'rollup',
   'singleCollaborator',
   'singleLineText',
   'url',
-])
+]);
 
 const BasicField = z.object({
   type: BasicFieldTypes,
   name: z.string(),
   id: z.string(),
-})
+});
 
-const PreciseNumberField = BasicField.extend({
-  type: z.enum(['number', 'currency', 'percent']),
+const numberTypes = z.enum(['number', 'currency', 'percent']);
+
+const PreciseNumberSubField = z.object({
+  type: numberTypes,
   options: z.object({
     precision: z.number().min(0).max(8),
   }),
-})
+});
+
+const DurationSubField = z.object({
+  type: z.literal('duration'),
+  options: z.object({ durationFormat: DurationFormat }),
+});
+
+const PreciseNumberField = BasicField.extend({
+  type: numberTypes,
+  options: z.object({
+    precision: z.number().min(0).max(8),
+  }),
+});
 
 const DateSubField = z.object({
   type: z.literal('date'),
   options: z.object({ dateFormat: DateFormat }),
-})
+});
+
 const DateTimeSubField = z.object({
   type: z.literal('dateTime'),
   options: z.object({
@@ -109,15 +122,18 @@ const DateTimeSubField = z.object({
     timeFormat: TimeFormat,
     timeZone: TimeZone,
   }),
-})
-const DateField = BasicField.merge(DateSubField)
-const DateTimeField = BasicField.merge(DateTimeSubField)
+});
+
+const DateField = BasicField.merge(DateSubField);
+
+const DateTimeField = BasicField.merge(DateTimeSubField);
+
 const CreatedTimeField = BasicField.extend({
   type: z.literal('createdTime'),
   options: z.object({
     result: z.discriminatedUnion('type', [DateSubField, DateTimeSubField]),
   }),
-})
+});
 
 const ExternalSyncSourceField = BasicField.extend({
   type: z.literal('externalSyncSource'),
@@ -130,19 +146,54 @@ const ExternalSyncSourceField = BasicField.extend({
       }),
     ),
   }),
-})
+});
 
 const LastModifiedTimeField = BasicField.extend({
   type: z.literal('lastModifiedTime'),
   options: z.object({
     result: z.discriminatedUnion('type', [DateSubField, DateTimeSubField]),
   }),
-})
+});
+
+const FormulaField = BasicField.extend({
+  type: z.literal('formula'),
+  options: z.object({
+    formula: z.string(),
+    isValid: z.boolean(),
+    referencedFieldIds: z.array(z.string()),
+    result: z.nullable(z.discriminatedUnion('type', [
+      DateSubField,
+      DateTimeSubField,
+      DurationSubField,
+      PreciseNumberSubField,
+      z.object({ type: z.literal('singleLineText') }),
+    ])),
+  }),
+});
+export type FormulaFieldType = z.infer<typeof FormulaField>;
+
+const RollupField = BasicField.extend({
+  type: z.literal('rollup'),
+  options: z.object({
+    result: z.nullable(z.discriminatedUnion('type', [
+      DateSubField,
+      DateTimeSubField,
+      DurationSubField,
+      PreciseNumberSubField,
+      z.object({ type: z.literal('singleLineText') }),
+    ])),
+    isValid: z.boolean(),
+    referencedFieldIds: z.array(z.string()),
+    recordLinkFieldId: z.nullable(z.string()),
+    fieldIdInLinkedTable: z.nullable(z.string()),
+  }),
+});
+export type RollupFieldType = z.infer<typeof RollupField>;
 
 const DurationField = BasicField.extend({
   type: z.literal('duration'),
   options: z.object({ durationFormat: DurationFormat }),
-})
+});
 
 const MultipleSelectsField = BasicField.extend({
   type: z.literal('multipleSelects'),
@@ -155,10 +206,11 @@ const MultipleSelectsField = BasicField.extend({
       }),
     ),
   }),
-})
+});
+
 const SingleSelectField = MultipleSelectsField.extend({
   type: z.literal('singleSelect'),
-})
+});
 
 const RatingField = BasicField.extend({
   type: z.literal('rating'),
@@ -178,19 +230,22 @@ const RatingField = BasicField.extend({
     icon: z.enum(['star', 'heart', 'thumbsUp', 'flag', 'dot']),
     max: z.number().min(1).max(10),
   }),
-})
+});
 
 export const FieldMetadataSchema = z.discriminatedUnion('type', [
   BasicField,
-  PreciseNumberField,
+  CreatedTimeField,
   DateField,
   DateTimeField,
-  CreatedTimeField,
-  ExternalSyncSourceField,
-  LastModifiedTimeField,
   DurationField,
+  ExternalSyncSourceField,
+  FormulaField,
+  LastModifiedTimeField,
   MultipleSelectsField,
-  SingleSelectField,
+  PreciseNumberField,
   RatingField,
-])
-export type FieldMetadata = z.infer<typeof FieldMetadataSchema>
+  RollupField,
+  SingleSelectField,
+]);
+
+export type FieldMetadata = z.infer<typeof FieldMetadataSchema>;

@@ -6,6 +6,7 @@ import { table } from 'node:console'
 import path from 'node:path'
 
 import { BaseListMetadataSchema, BaseMetadata, TableListMetadataSchema, TableMetadata } from '../schemas/api'
+import { FieldMetadataSchema } from '../schemas/fields'
 import { AIRTABLE_API_BASE, AIRTABLE_API_BASE_META_PATH, AIRTABLE_API_VERSION } from '../utils/constants'
 import {
   AttachmentPyImpl,
@@ -139,6 +140,7 @@ Reads environment from .env file if present in current working directory.`
    */
   private async getTableMetadata(allowlist?: string[]): Promise<TableMetadata[]> {
     const res = await this.fetchAirtableApi(`${AIRTABLE_API_BASE_META_PATH}/${this.baseId}/tables`)
+
     const metadata = TableListMetadataSchema.parse(res)
 
     if (!allowlist) return metadata.tables
