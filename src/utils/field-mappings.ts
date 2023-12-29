@@ -1,5 +1,5 @@
 import { TableMetadata } from '../schemas/api'
-import { FieldMetadata, FormulaFieldType, RollupFieldType } from '../schemas/fields'
+import { FieldMetadata } from '../schemas/fields'
 import { getFieldEnumName } from './helpers'
 
 export function getZodType(table: TableMetadata, field: FieldMetadata) {
@@ -9,7 +9,7 @@ export function getZodType(table: TableMetadata, field: FieldMetadata) {
     case 'barcode':
       return 'z.object({ text: z.string(), type: z.string() })'
     case 'button':
-      return 'z.object({ label: z.string(), url: z.string().optional() })'
+      return 'z.object({ label: z.string(), url: z.string().url().optional() })'
     case 'checkbox':
       return 'z.boolean()'
     case 'count':
@@ -23,13 +23,13 @@ export function getZodType(table: TableMetadata, field: FieldMetadata) {
     case 'createdTime':
     case 'lastModifiedTime':
       return 'z.coerce.date()'
-    case 'number':
+    case 'number': // is number definitely positive?
     case 'percent':
     case 'currency': {
       if ('options' in field && field.options.precision === 0) {
-        return 'z.number().int().positive()'
+        return 'z.number().int()'
       } else {
-        return 'z.number().positive()'
+        return 'z.number()'
       }
     }
     case 'duration':
@@ -41,19 +41,46 @@ export function getZodType(table: TableMetadata, field: FieldMetadata) {
     case 'multilineText':
     case 'phoneNumber':
     case 'singleLineText':
-    case 'url':
     case 'richText':
       return 'z.string()'
+    case 'url':
+      return 'z.string().url()'
     case 'rollup':
-      return 'z.union([z.string(), z.number(), z.array(z.string())])'
+      if (['number', 'currency', 'percent'].includes(field.options.result?.type || "")) {
+        // @ts-ignore
+        if (field.options.result?.options?.precision === 0) {
+          return 'z.number().int()'
+        }
+        return 'z.number()'
+      }
+      return 'z.union([z.string(), z.array(z.string())])'
     case 'formula':
-      return 'z.union([z.string(), z.number()])'
+      if (['number', 'currency', 'percent'].includes(field.options.result?.type || "")) {
+        // @ts-ignore
+        if (field.options.result?.options?.precision === 0) {
+          return 'z.number().int()'
+        }
+        return 'z.number()'
+      }
+      return 'z.string()'
     case 'multipleCollaborators':
       return 'z.array(AirtableCollaboratorSchema)'
     case 'multipleAttachments':
       return 'z.array(AirtableAttachmentSchema)'
     case 'multipleLookupValues':
-      return 'z.union([z.array(z.string()), z.array(z.boolean()), z.array(z.number()), z.array(z.record(z.unknown())), z.array(IAirtableAttachment)])'
+      if (['number', 'currency', 'percent'].includes(field.options.result?.type || "")) {
+        return 'z.array(z.number())'
+      } else if (field.options.result?.type === 'multipleAttachments') {
+        return 'z.array(AirtableAttachmentSchema)'
+      } else if (field.options.result?.type === 'checkbox') {
+        return 'z.array(z.boolean())'
+      } else {
+        // TODO can also handle single/multiple select case...
+        // should be able to just call this function again? 
+        // But would need to do more clever lookup for single/multi select
+        // also a url lookup field would look very different too
+        return 'z.array(z.string())'
+      }
     case 'multipleRecordLinks':
       return 'z.array(z.string())'
     case 'singleSelect':
@@ -113,11 +140,12 @@ export function getTsType(field: FieldMetadata) {
     case 'richText':
       return 'string'
     case 'rollup':
+      // if AirTable ever includes formulas in their rollup metadata, this could be further refined away from string | Array<string>
+      // this could be done by looking for non-numeric string join functions like CONCATENATE() or ARRAYJOIN()
       return ['number', 'currency', 'percent'].includes(field.options.result?.type || "") ? 'number' : 'string | Array<string>';
-      // return 'number | string | Array<string>'
     case 'formula':
       return ['number', 'currency', 'percent'].includes(field.options.result?.type || "") ? 'number' : 'string';
-      // return 'number | string'
+    // return 'number | string'
     case 'barcode':
       return `{ text: string; type: string; }`
     case 'button':
@@ -139,7 +167,18 @@ export function getTsType(field: FieldMetadata) {
     case 'multipleAttachments':
       return 'Array<IAirtableAttachment>'
     case 'multipleLookupValues':
-      return 'Array<string | boolean | number | IAirtableAttachment>'
+      if (['number', 'currency', 'percent'].includes(field.options.result?.type || "")) {
+        return 'Array<number>'
+      } else if (field.options.result?.type === 'multipleAttachments') {
+        return 'Array<IAirtableAttachment>'
+      } else if (field.options.result?.type === 'checkbox') {
+        return 'Array<boolean>'
+      } else {
+        // TODO can also handle single/multiple select case...
+        // should be able to just call this function again? 
+        // But would need to do more clever lookup for single/multi select
+        return 'Array<string>'
+      }
     case 'multipleRecordLinks':
       return 'Array<string>'
     case 'singleSelect':
@@ -158,13 +197,17 @@ export function getTsType(field: FieldMetadata) {
 export function getPythonType(field: FieldMetadata): string {
   switch (field.type) {
     case 'number':
-    case 'count':
     case 'currency':
     case 'percent':
-    case 'rating':
-    case 'autoNumber':
+      if (field.options.precision === 0)
+        return 'int';
+      return 'float';
     case 'duration':
       return 'float';
+    case 'rating':
+    case 'count':
+    case 'autoNumber':
+      return 'int';
     case 'email':
     case 'multilineText':
     case 'phoneNumber':
@@ -173,9 +216,11 @@ export function getPythonType(field: FieldMetadata): string {
     case 'richText':
       return 'str';
     case 'rollup':
-      return 'Union[float, str, list[str]]';
+      // if AirTable ever includes formulas in their rollup metadata, this could be further refined away from string | Array<string>
+      // this could be done by looking for non-numeric string join functions like CONCATENATE() or ARRAYJOIN()
+      return ['number', 'currency', 'percent'].includes(field.options.result?.type || "") ? 'float' : 'Union[float, str]';
     case 'formula':
-      return 'Union[float, str]';
+      return ['number', 'currency', 'percent'].includes(field.options.result?.type || "") ? 'float' : 'str';
     case 'barcode':
       return '{text: str, type: str}';
     case 'button':
@@ -196,7 +241,18 @@ export function getPythonType(field: FieldMetadata): string {
     case 'multipleAttachments':
       return 'list[IAirtableAttachment]';
     case 'multipleLookupValues':
-      return 'list[Union[str, bool, float, IAirtableAttachment]]';
+      if (['number', 'currency', 'percent'].includes(field.options.result?.type || "")) {
+        return 'list[float]'
+      } else if (field.options.result?.type === 'multipleAttachments') {
+        return 'list[IAirtableAttachment]'
+      } else if (field.options.result?.type === 'checkbox') {
+        return 'list[bool]'
+      } else {
+        // TODO can also handle single/multiple select case...
+        // should be able to just call this function again? 
+        // But would need to do more clever lookup for single/multi select
+        return 'list[string]'
+      }
     case 'multipleRecordLinks':
       return 'list[str]';
     case 'singleSelect':

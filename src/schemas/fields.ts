@@ -74,8 +74,6 @@ export const BasicFieldTypes = z.enum([
   'multilineText',
   'multipleAttachments',
   'multipleCollaborators',
-  'multipleLookupValues',
-  'multipleRecordLinks',
   'phoneNumber',
   'richText',
   'singleCollaborator',
@@ -188,7 +186,43 @@ const RollupField = BasicField.extend({
     fieldIdInLinkedTable: z.nullable(z.string()),
   }),
 });
-export type RollupFieldType = z.infer<typeof RollupField>;
+
+// TODO this is basically potentially an array of any other field type...
+const MultipleLookupValuesField = BasicField.extend({
+  type: z.literal('multipleLookupValues'),
+  options: z.object({
+    result: z.nullable(z.discriminatedUnion('type', [
+      DateSubField,
+      DateTimeSubField,
+      DurationSubField,
+      PreciseNumberSubField,
+      z.object({ type: z.literal('checkbox') }),            // boolean[]
+      z.object({ type: z.literal('email') }),               // string[]
+      z.object({ type: z.literal('multipleAttachments') }), // TODO attachment type
+      z.object({ type: z.literal('multipleRecordLinks') }), // TODO record link type
+      z.object({ type: z.literal('singleSelect') }),        // TODO source field single select type
+      z.object({ type: z.literal('multilineText') }),       // string[]
+      z.object({ type: z.literal('singleLineText') }),      // string[]
+      z.object({ type: z.literal('url') }),                 // string[]
+      z.object({ type: z.literal('richText') }),            // string[]
+      z.object({ type: z.literal('phoneNumber') }),         // string[]
+    ])),
+    isValid: z.boolean(),
+    referencedFieldIds: z.optional(z.array(z.string())),
+    recordLinkFieldId: z.nullable(z.string()),
+    fieldIdInLinkedTable: z.nullable(z.string()),
+  }),
+});
+
+const MultipleRecordLinks = BasicField.extend({
+  type: z.literal('multipleRecordLinks'),
+  options: z.object({
+    inverseLinkFieldId: z.optional(z.string()),
+    isReversed: z.boolean(),
+    linkedTableId: z.string(),
+    prefersSingleRecordLink: z.boolean(),
+  }),
+});
 
 const DurationField = BasicField.extend({
   type: z.literal('duration'),
@@ -241,6 +275,8 @@ export const FieldMetadataSchema = z.discriminatedUnion('type', [
   ExternalSyncSourceField,
   FormulaField,
   LastModifiedTimeField,
+  MultipleLookupValuesField,
+  MultipleRecordLinks,
   MultipleSelectsField,
   PreciseNumberField,
   RatingField,

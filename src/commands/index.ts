@@ -141,6 +141,8 @@ Reads environment from .env file if present in current working directory.`
   private async getTableMetadata(allowlist?: string[]): Promise<TableMetadata[]> {
     const res = await this.fetchAirtableApi(`${AIRTABLE_API_BASE_META_PATH}/${this.baseId}/tables`)
 
+    // write res to file
+    await fs.writeFile('res.json', JSON.stringify(res));
     const metadata = TableListMetadataSchema.parse(res)
 
     if (!allowlist) return metadata.tables
@@ -338,7 +340,7 @@ Reads environment from .env file if present in current working directory.`
         lines.push(`  '${fieldName.replace("'", '\\\'')}': '${fieldId}',`)
       }
 
-      lines.push('};');
+      lines.push('}');
       lines.push('');
     }
 
@@ -418,6 +420,7 @@ Reads environment from .env file if present in current working directory.`
     lines.push('export type TableKey = keyof typeof TableIds;');
     lines.push('export type TableId = typeof TableIds[TableKey];');
     lines.push('export type TableType = typeof TableIdToObjectMapping[TableId];');
+    lines.push('');
 
     return lines.join('\n')
   }
