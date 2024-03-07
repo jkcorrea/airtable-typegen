@@ -11,9 +11,7 @@ airtable.apiKey = import.meta.env.VITE_AIRTABLE_API_KEY
 export default async function fetchAirtableData() {
   const Base = airtable.base('app0JmQpZFn7YCI4C')
   const data = await Base('Furniture').select().all()
-  console.log(data)
   const rawRows = data.map((row) => row.fields)
-  console.log(rawRows)
   const rows = z.array(FurnitureSchema).safeParse(rawRows)
   if (rows.success) {
     return rows.data
