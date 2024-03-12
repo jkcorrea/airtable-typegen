@@ -2,11 +2,9 @@ import { Command, Flags } from '@oclif/core'
 import { paramCase, pascalCase } from 'change-case'
 import * as dotenv from 'dotenv'
 import fs from 'fs-extra'
-import { table } from 'node:console'
 import path from 'node:path'
 
 import { BaseListMetadataSchema, BaseMetadata, TableListMetadataSchema, TableMetadata } from '../schemas/api'
-import { FieldMetadataSchema } from '../schemas/fields'
 import { AIRTABLE_API_BASE, AIRTABLE_API_BASE_META_PATH, AIRTABLE_API_VERSION } from '../utils/constants'
 import {
   AttachmentPyImpl,
@@ -15,7 +13,6 @@ import {
   CollaboratorPyImpl,
   CollaboratorTsTmpl,
   CollaboratorZodTmpl,
-  getPythonType,
   getTsType,
   getZodType,
 } from '../utils/field-mappings'
@@ -142,7 +139,7 @@ Reads environment from .env file if present in current working directory.`
     const res = await this.fetchAirtableApi(`${AIRTABLE_API_BASE_META_PATH}/${this.baseId}/tables`)
 
     // write res to file
-    await fs.writeFile('res.json', JSON.stringify(res));
+    await fs.writeFile('res.json', JSON.stringify(res))
     const metadata = TableListMetadataSchema.parse(res)
 
     if (!allowlist) return metadata.tables
@@ -184,7 +181,7 @@ Reads environment from .env file if present in current working directory.`
   private async generateZodSchemas(base: BaseMetadata, tables: TableMetadata[], includeMapping: boolean) {
     const lines: string[] = []
     lines.push("import { z } from 'zod'")
-    
+
     lines.push('')
 
     const allFields = tables.map((t) => t.fields).flat()
@@ -197,12 +194,12 @@ Reads environment from .env file if present in current working directory.`
       lines.push('')
     }
 
-    const tableIds: string[] = [];
-    const tableIdToObjectMappings: string[] = [];
+    const tableIds: string[] = []
+    const tableIdToObjectMappings: string[] = []
 
     if (includeMapping) {
-      tableIds.push(`export const TableIds = {`);
-      tableIdToObjectMappings.push(`export const TableIdToObjectMapping = {`);
+      tableIds.push(`export const TableIds = {`)
+      tableIdToObjectMappings.push(`export const TableIdToObjectMapping = {`)
     }
 
     for (const table of tables) {
@@ -212,13 +209,14 @@ Reads environment from .env file if present in current working directory.`
           const enumName = getFieldEnumName(table, field)
           lines.push(`export const ${enumName} = z.enum([`)
           for (const choice of field.options.choices) {
-            lines.push(`  '${choice.name.replace("'", "\\\'")}',`)
+            lines.push(`  '${choice.name.replace("'", "\\'")}',`)
           }
           lines.push('])')
           lines.push('')
         }
       }
 
+      // Generate schemas table
       const tableSchemaName = `${pascalCase(table.name)}Schema`
       const tableTypeName = pascalCase(table.name)
       lines.push(`export const ${tableSchemaName} = z.object({`)
@@ -229,25 +227,46 @@ Reads environment from .env file if present in current working directory.`
         // NOTE: Airtable API will NOT return a field if it's blank
         // so almost everything has to be marked optional unfortunately
         const isReadonly = isReadonlyField(field)
-        const suffix = isReadonly ? ',' : '.optional(),'
-        lines.push(`  '${fieldName.replace("'", "\\\'")}': ${fieldType}${suffix}`)
+        const suffix = isReadonly ? '.readonly(),' : '.optional(),'
+        lines.push(`  '${fieldName.replace("'", "\\'")}': ${fieldType}${suffix}`)
       }
-
       lines.push('})')
       lines.push(`export type ${tableTypeName} = z.infer<typeof ${tableSchemaName}>`)
       lines.push('')
+      //end
 
-      if (includeMapping) {        
-        const mappingTableName = `${tableTypeName}FieldIdMapping`;
-        
-        tableIds.push(`  '${pascalCase(table.name)}': '${table.id}',`);
+      // Generate schemas insertabletable
+      const insertabletableSchemaName = `${pascalCase(table.name)}InsertableSchema`
+      const insertabletableTypeName = `${pascalCase(table.name)}Insertable`
+      lines.push(`export const ${insertabletableSchemaName} = z.object({`)
+
+      for (const field of table.fields) {
+        const fieldName = field.name
+        const fieldType = getZodType(table, field)
+        // NOTE: Airtable API will NOT return a field if it's blank
+        // so almost everything has to be marked optional unfortunately
+        const isReadonly = isReadonlyField(field)
+        if (!isReadonly) {
+          const suffix = '.optional(),'
+          lines.push(`  '${fieldName.replace("'", "\\'")}': ${fieldType}${suffix}`)
+        }
+      }
+      lines.push('})')
+      lines.push(`export type ${insertabletableTypeName} = z.infer<typeof ${insertabletableSchemaName}>`)
+      lines.push('')
+      // end
+
+      if (includeMapping) {
+        const mappingTableName = `${tableTypeName}FieldIdMapping`
+
+        tableIds.push(`  '${pascalCase(table.name)}': '${table.id}',`)
         tableIdToObjectMappings.push(`  '${table.id}': ${mappingTableName},`)
         lines.push(`export const ${mappingTableName} = {`)
 
         for (const field of table.fields) {
           const fieldName = field.name
           const fieldId = field.id
-          lines.push(`  '${fieldName.replace("'", '\\\'')}': '${fieldId}',`)
+          lines.push(`  '${fieldName.replace("'", "\\'")}': '${fieldId}',`)
         }
 
         lines.push('} as const;')
@@ -256,62 +275,62 @@ Reads environment from .env file if present in current working directory.`
     }
 
     if (includeMapping) {
-      tableIds.push(`} as const;`);
-      tableIdToObjectMappings.push(`} as const;`);
+      tableIds.push(`} as const;`)
+      tableIdToObjectMappings.push(`} as const;`)
     }
 
-    lines.push(...tableIds);
-    lines.push('');
+    lines.push(...tableIds)
+    lines.push('')
 
-    lines.push(...tableIdToObjectMappings);
-    lines.push('');
+    lines.push(...tableIdToObjectMappings)
+    lines.push('')
 
     return lines.join('\n')
   }
 
   private async generateJSFieldMappings(base: BaseMetadata, tables: TableMetadata[]) {
     const lines: string[] = []
-    const tableIds: string[] = [];
-    const tableIdToObjectMappings: string[] = [];
-    
-    tableIds.push(`export const TableIds = {`);
-    tableIdToObjectMappings.push(`export const TableIdToObjectMapping = {`);
+    const tableIds: string[] = []
+    const tableIdToObjectMappings: string[] = []
+
+    tableIds.push(`export const TableIds = {`)
+    tableIdToObjectMappings.push(`export const TableIdToObjectMapping = {`)
 
     for (const table of tables) {
       const tableName = pascalCase(table.name)
-      
-      const mappingTableName = `${tableName}FieldIdMapping`;
+
+      const mappingTableName = `${tableName}FieldIdMapping`
       lines.push(`export const ${mappingTableName} = {`)
-      tableIds.push(`  '${table.name}': '${table.id}',`);
+      tableIds.push(`  '${table.name}': '${table.id}',`)
       tableIdToObjectMappings.push(`  '${table.id}': ${mappingTableName},`)
 
       for (const field of table.fields) {
         const fieldName = field.name
         const fieldId = field.id
-        lines.push(`  '${fieldName.replace("'", '\\\'')}': '${fieldId}',`)
+        lines.push(`  '${fieldName.replace("'", "\\'")}': '${fieldId}',`)
       }
 
-      lines.push('};');
-      lines.push('');
+      lines.push('};')
+      lines.push('')
     }
 
-    tableIds.push(`};`);
-    tableIdToObjectMappings.push(`};`);
+    tableIds.push(`};`)
+    tableIdToObjectMappings.push(`};`)
 
-    lines.push(...tableIds);
-    lines.push('');
-    lines.push(...tableIdToObjectMappings);
-    lines.push('');
+    lines.push(...tableIds)
+    lines.push('')
+    lines.push(...tableIdToObjectMappings)
+    lines.push('')
 
     return lines.join('\n')
   }
 
   private async generatePythonFieldMappings(base: BaseMetadata, tables: TableMetadata[]) {
     const lines: string[] = []
-    const tableIds: string[] = [];
-    const tableIdToObjectMappings: string[] = [];
+    const tableIds: string[] = []
+    const tableIdToObjectMappings: string[] = []
 
-    lines.push("from typing import Optional, TypedDict")
+    lines.push('from typing import Optional, TypedDict')
 
     const allFields = tables.map((t) => t.fields).flat()
     if (hasAttachmentField(allFields)) {
@@ -322,35 +341,35 @@ Reads environment from .env file if present in current working directory.`
       lines.push(CollaboratorPyImpl)
       lines.push('')
     }
-    
-    tableIds.push(`TableIds = {`);
-    tableIdToObjectMappings.push(`TableIdToObjectMapping = {`);
+
+    tableIds.push(`TableIds = {`)
+    tableIdToObjectMappings.push(`TableIdToObjectMapping = {`)
 
     for (const table of tables) {
       const tableName = pascalCase(table.name)
-      
-      const mappingTableName = `${tableName}FieldIdMapping`;
+
+      const mappingTableName = `${tableName}FieldIdMapping`
       lines.push(`${mappingTableName} = {`)
-      tableIds.push(`  '${pascalCase(table.name)}': '${table.id}',`);
+      tableIds.push(`  '${pascalCase(table.name)}': '${table.id}',`)
       tableIdToObjectMappings.push(`  '${table.id}': ${mappingTableName},`)
 
       for (const field of table.fields) {
         const fieldName = field.name
         const fieldId = field.id
-        lines.push(`  '${fieldName.replace("'", '\\\'')}': '${fieldId}',`)
+        lines.push(`  '${fieldName.replace("'", "\\'")}': '${fieldId}',`)
       }
 
-      lines.push('}');
-      lines.push('');
+      lines.push('}')
+      lines.push('')
     }
 
-    tableIds.push(`};`);
-    tableIdToObjectMappings.push(`}`);
+    tableIds.push(`};`)
+    tableIdToObjectMappings.push(`}`)
 
-    lines.push(...tableIds);
-    lines.push('');
-    lines.push(...tableIdToObjectMappings);
-    lines.push('');
+    lines.push(...tableIds)
+    lines.push('')
+    lines.push(...tableIdToObjectMappings)
+    lines.push('')
 
     return lines.join('\n')
   }
@@ -359,8 +378,10 @@ Reads environment from .env file if present in current working directory.`
     const lines: string[] = []
 
     lines.push('// @ts-nocheck')
-    lines.push(`// We are ignoring the type errors related to FieldSet this because AirTables SDKs don't have a correct value for the FieldSet`);
-    lines.push("import { FieldSet } from 'airtable'");
+    lines.push(
+      `// We are ignoring the type errors related to FieldSet this because AirTables SDKs don't have a correct value for the FieldSet`,
+    )
+    lines.push("import { FieldSet } from 'airtable'")
 
     const allFields = tables.map((t) => t.fields).flat()
     if (hasAttachmentField(allFields)) {
@@ -372,15 +393,15 @@ Reads environment from .env file if present in current working directory.`
       lines.push('')
     }
 
-    const tableIds: string[] = [];
-    const tableIdToObjectMappings: string[] = [];
+    const tableIds: string[] = []
+    const tableIdToObjectMappings: string[] = []
 
-    tableIds.push(`export const TableIds = {`);
-    tableIdToObjectMappings.push(`export const TableIdToObjectMapping = {`);
+    tableIds.push(`export const TableIds = {`)
+    tableIdToObjectMappings.push(`export const TableIdToObjectMapping = {`)
 
     for (const table of tables) {
       const tableName = pascalCase(table.name)
-      lines.push(`export interface ${tableName} extends FieldSet {`);
+      lines.push(`export interface ${tableName} extends FieldSet {`)
 
       for (const field of table.fields) {
         const fieldName = field.name
@@ -388,39 +409,39 @@ Reads environment from .env file if present in current working directory.`
         // NOTE: Airtable API will NOT return a field if it's blank
         // so almost everything has to be marked optional unfortunately
         const isReadonly = isReadonlyField(field)
-        lines.push(`  '${fieldName.replace("'", '\\\'')}'${isReadonly ? '' : '?'}: ${fieldType}`)
+        lines.push(`  '${fieldName.replace("'", "\\'")}'${isReadonly ? '' : '?'}: ${fieldType}`)
       }
 
       lines.push('}')
       lines.push('')
 
-      const mappingTableName = `${tableName}FieldIdMapping`;
+      const mappingTableName = `${tableName}FieldIdMapping`
       lines.push(`export const ${mappingTableName} = {`)
-      tableIds.push(`  '${table.name}': '${table.id}',`);
+      tableIds.push(`  '${table.name}': '${table.id}',`)
       tableIdToObjectMappings.push(`  '${table.id}': ${mappingTableName},`)
 
       for (const field of table.fields) {
         const fieldName = field.name
         const fieldId = field.id
-        lines.push(`  '${fieldName.replace("'", '\\\'')}': '${fieldId}',`)
+        lines.push(`  '${fieldName.replace("'", "\\'")}': '${fieldId}',`)
       }
 
       lines.push('} as const;')
       lines.push('')
     }
 
-    tableIds.push(`} as const;`);
-    tableIdToObjectMappings.push(`} as const;`);
+    tableIds.push(`} as const;`)
+    tableIdToObjectMappings.push(`} as const;`)
 
-    lines.push(...tableIds);
-    lines.push('');
-    lines.push(...tableIdToObjectMappings);
-    lines.push('');
+    lines.push(...tableIds)
+    lines.push('')
+    lines.push(...tableIdToObjectMappings)
+    lines.push('')
 
-    lines.push('export type TableKey = keyof typeof TableIds;');
-    lines.push('export type TableId = typeof TableIds[TableKey];');
-    lines.push('export type TableType = typeof TableIdToObjectMapping[TableId];');
-    lines.push('');
+    lines.push('export type TableKey = keyof typeof TableIds;')
+    lines.push('export type TableId = typeof TableIds[TableKey];')
+    lines.push('export type TableType = typeof TableIdToObjectMapping[TableId];')
+    lines.push('')
 
     return lines.join('\n')
   }
