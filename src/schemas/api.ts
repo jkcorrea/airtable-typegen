@@ -5,7 +5,7 @@ import { FieldMetadataSchema } from './fields'
 export const ViewMetadataSchema = z.object({
   id: z.string(),
   name: z.string(),
-  type: z.enum(['grid', 'form', 'calendar', 'gallery', 'kanban', 'block', 'levels', 'timeline']),
+  type: z.enum(['grid', 'form', 'calendar', 'gallery', 'kanban', 'block', 'levels', 'timeline', 'levels']),
 })
 export type ViewMetadata = z.infer<typeof ViewMetadataSchema>
 

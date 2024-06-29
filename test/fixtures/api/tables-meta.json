@@ -504,6 +504,11 @@
           "id": "viwtqpPEMVOvQOq9u",
           "name": "Just office furniture",
           "type": "grid"
+        },
+        {
+          "id": "viwvLENagZ198820w",
+          "name": "Furniture sets",
+          "type": "levels"
         }
       ]
     },
@@ -628,10 +633,7 @@
           "type": "formula",
           "options": {
             "isValid": true,
-            "referencedFieldIds": [
-              "fldPvpKkpn17F1Wzg",
-              "fldNvvsZK8Ms6gbND"
-            ],
+            "referencedFieldIds": ["fldPvpKkpn17F1Wzg", "fldNvvsZK8Ms6gbND"],
             "result": {
               "type": "singleLineText"
             }
@@ -771,11 +773,7 @@
           "type": "formula",
           "options": {
             "isValid": true,
-            "referencedFieldIds": [
-              "fld3qxtb8vwp07wS6",
-              "fldKtxaK0raVsXY1k",
-              "fldVoviWYw1Xn8Z2k"
-            ],
+            "referencedFieldIds": ["fld3qxtb8vwp07wS6", "fldKtxaK0raVsXY1k", "fldVoviWYw1Xn8Z2k"],
             "result": {
               "type": "singleLineText"
             }
@@ -823,10 +821,7 @@
           "type": "formula",
           "options": {
             "isValid": true,
-            "referencedFieldIds": [
-              "fldLttaHOvaXvZQYq",
-              "fldKtxaK0raVsXY1k"
-            ],
+            "referencedFieldIds": ["fldLttaHOvaXvZQYq", "fldKtxaK0raVsXY1k"],
             "result": {
               "type": "currency",
               "options": {
