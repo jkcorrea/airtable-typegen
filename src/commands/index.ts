@@ -174,7 +174,7 @@ Reads environment from .env file if present in current working directory.`
           const enumName = getFieldEnumName(table, field)
           lines.push(`export const ${enumName} = z.enum([`)
           for (const choice of field.options.choices) {
-            lines.push(`  '${choice.name}',`)
+            lines.push(`  '${choice.name.replace(/'/g, "\\\'")}',`)
           }
           lines.push('])')
           lines.push('')

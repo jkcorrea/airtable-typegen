@@ -48,6 +48,11 @@
                 "id": "selhpnAwN7BRrhvae",
                 "name": "Tables",
                 "color": "redLight1"
+              },
+              {
+                "id": "selDGccFqZVxogrLB",
+                "name": "Baker's Racks and Carpenter's Tables",
+                "color": "redLight1"
               }
             ]
           },
@@ -397,6 +402,11 @@
                 "id": "selGvIVMJ8OX7uSLl",
                 "name": "Bedroom",
                 "color": "purpleLight2"
+              },
+              {
+                "id": "selqIAVygoSnxoWQ1",
+                "name": "Child's or infant's room",
+                "color": "blueLight1"
               }
             ]
           },

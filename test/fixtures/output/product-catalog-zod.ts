@@ -27,6 +27,7 @@ export const FurnitureType = z.enum([
   'Rugs',
   'Sofas',
   'Tables',
+  'Baker\'s Racks and Carpenter\'s Tables',
 ])
 
 export const FurnitureMaterials = z.enum([
@@ -92,6 +93,7 @@ export const FurnitureSettings = z.enum([
   'Outdoor',
   'Dining',
   'Bedroom',
+  'Child\'s or infant\'s room',
 ])
 
 export const FurnitureSchema = z.object({
