@@ -138,9 +138,9 @@ export function getTsType(field: FieldMetadata) {
     case 'multipleRecordLinks':
       return 'Array<string>'
     case 'singleSelect':
-      return field.options.choices.map((choice) => `'${choice.name}'`).join(' | ')
+      return field.options.choices.map((choice) => `'${choice.name.replace(/'/g, "\\\'")}'`).join(' | ')
     case 'multipleSelects':
-      return `Array<${field.options.choices.map((choice) => `'${choice.name}'`).join(' | ')}>`
+      return `Array<${field.options.choices.map((choice) => `'${choice.name.replace(/'/g, "\\\'")}'`).join(' | ')}>`
     // TODO not sure what this one is
     case 'externalSyncSource':
       return 'unknown'

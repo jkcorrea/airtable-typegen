@@ -19,7 +19,7 @@ export interface IAirtableAttachment {
 
 export interface Furniture {
   'Name'?: string
-  'Type'?: 'Beds' | 'Bookshelves' | 'Chairs' | 'Lighting' | 'Rugs' | 'Sofas' | 'Tables'
+  'Type'?: 'Beds' | 'Bookshelves' | 'Chairs' | 'Lighting' | 'Rugs' | 'Sofas' | 'Tables' | 'Baker\'s Racks and Carpenter\'s Tables'
   'Images'?: Array<IAirtableAttachment>
   'Vendor'?: Array<string>
   'In stock'?: boolean
@@ -27,7 +27,7 @@ export interface Furniture {
   'Size (WxLxH)'?: string
   'Materials'?: Array<'Brass' | 'Brushed nickel' | 'Corduroy' | 'Cotton' | 'Dark wood' | 'Foam beans' | 'Glass' | 'Glazed ceramic' | 'Indian wool' | 'Iron' | 'Lacquered ash' | 'Leather' | 'Leather cowhide' | 'Light wood' | 'Linen shade' | 'Marble' | 'Metal' | 'Mirror' | 'Poly-cotton shade' | 'Reclaimed wood' | 'Shiny black' | 'Solid maple' | 'Solid teak' | 'Stainless steel' | 'Steel' | 'Suede' | 'Tech suede' | 'Viscose' | 'Walnut' | 'Wool'>
   'Color'?: Array<'Beige' | 'Black' | 'Blue' | 'Blue purple' | 'Brown' | 'Cherry' | 'Cream' | 'Fern' | 'Framboise' | 'Gold' | 'Green' | 'Grey' | 'Matte black' | 'Orange' | 'Red' | 'Shiny black' | 'Silver' | 'Taupe' | 'Velvet' | 'White' | 'Yellow'>
-  'Settings'?: Array<'Living room' | 'Office' | 'Outdoor' | 'Dining' | 'Bedroom'>
+  'Settings'?: Array<'Living room' | 'Office' | 'Outdoor' | 'Dining' | 'Bedroom' | 'Child\'s or infant\'s room'>
   'Schematic'?: Array<IAirtableAttachment>
   'Designer'?: Array<string>
   'Description'?: string
